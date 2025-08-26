@@ -1,0 +1,39 @@
+server:
+  port: 9931
+
+spring:
+  autoconfigure:
+    exclude: 'org.springframework.boot.autoconfigure.r2dbc.R2dbcAutoConfiguration'
+  application:
+    name: sorm-935
+  data:
+    r2dbc:
+      repositories:
+        enabled: false
+  graphql:
+    path: /query
+    graphiql:
+      enabled: true
+    schema:
+      printer:
+        enabled: true
+    websocket:
+      connection-init-timeout: 10000s
+      keep-alive: 3000000s
+
+management:
+  server:
+    port: 9990
+    ssl:
+      enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: prometheus,health,info
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  endpoint:
+    health:
+      show-details: never

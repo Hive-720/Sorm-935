@@ -1,0 +1,110 @@
+type Query {
+    request: QueryMessage!
+    getSchema: String!
+}
+
+type QueryMessage {
+    requestID: String!
+    offline: Boolean!
+    maxPageSize: Int
+
+    users(filter: UserFilterInput!, offset: Int, limit: Int): UserResult!
+    comments(filter: CommentFilterInput!, offset: Int, limit: Int): CommentResult!
+}
+
+input CommentFilterInput {
+    and: [CommentFilterInput]
+    or: [CommentFilterInput]
+    not: CommentFilterInput
+    userId: String
+    text: String
+}
+
+input UserFilterInput {
+    and: [UserFilterInput]
+    or: [UserFilterInput]
+    not: UserFilterInput
+    name: String
+    age: Int
+}
+
+type UserResult {
+    hasNextPage: Boolean
+    result: [User!]
+}
+
+type CommentResult {
+    hasNextPage: Boolean
+    result: [Comment!]
+}
+
+type User {
+    id: String!
+    name: String!
+    comments(offset: Int, limit: Int): CommentResult!
+}
+
+type Comment {
+    id: String!
+    userId: String!
+    text: String!
+}
+
+type Subscription {
+    trap: Trap!
+#    statusOfflineRequest(requestID: String!): String!
+}
+
+type Trap {
+    type: TrapType!
+    message: String
+#    startsAt: DateTimeBase!
+#    metricalerts: MetricAlerts
+}
+
+enum TrapType {
+    RESTARTDB
+    UNAUTHORIZEDACCESS
+    CRITICALERROR
+    MAJORERROR
+    MINORERROR
+    SCHEMCHANGED
+    METRICALERTS
+}
+
+##15. Информация о дате и времени события
+#type DateTimeBase {
+#    #YYYY-MM-DDThh:mm:ssthh:mm (в UTC)
+#    utc: String!
+#}
+#
+#type MetricAlerts {
+#    groupKey: String!
+#    status: AlertStatus!
+#    receiver: String!
+#    groupLabels: [KeyValueRef!]!
+#    commonLabels: [KeyValueRef!]!
+#    commonAnnotations: [KeyValueRef!]!
+#    externalURL: String!
+#    alerts: [Alert!]!
+#}
+#
+#enum AlertStatus {
+#    RESOLVED
+#    FIRING
+#}
+#
+#type Alert {
+#    status: AlertStatus!
+#    labels: [KeyValueRef!]!
+#    annotations: [KeyValueRef!]!
+#    startAt: DateTimeBase!
+#    endsAt: DateTimeBase!
+#    generatorURL: String!
+#    fingerprint: String!
+#}
+#
+#type KeyValueRef {
+#    key: String!
+#    value: String!
+#}

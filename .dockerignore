@@ -1,0 +1,14 @@
+# Exclude local build outputs and VCS metadata from Docker context
+.build/
+build/
+.gradle/
+.git/
+.gitignore
+**/.DS_Store
+
+# IDE files
+.idea/
+*.iml
+
+# Node/yarn (if any)
+node_modules/

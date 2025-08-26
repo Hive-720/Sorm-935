@@ -1,0 +1,12 @@
+server:
+  port: 9931
+
+spring:
+  application:
+    name: sorm-935
+  graphql:
+    graphiql:
+      enabled: true
+    schema:
+      printer:
+        enabled: true

@@ -1,0 +1,78 @@
+# Docker Compose to run the SORM Server, Prometheus, Grafana, Loki, and Promtail
+# Usage:
+#   docker compose -f docker-compose.dev.yml up --build
+# Services:
+#   - SORM Server (mTLS on 9931, management on 9990)
+#   - Prometheus (scrapes app metrics from /actuator/prometheus)
+#   - Grafana (visualize metrics; default creds admin/admin)
+#   - Loki (centralized log storage)
+#   - Promtail (ships server logs to Loki)
+# Access:
+#   - SORM Server health:   http://localhost:9990/actuator/health
+#   - SORM Server metrics:  http://localhost:9990/actuator/prometheus
+#   - Prometheus UI:        http://localhost:9090
+#   - Grafana UI:           http://localhost:3000
+#   - Loki API:             http://localhost:3100/ready
+
+services:
+  sorm-server:
+    build: .
+    image: sorm-server-935:latest
+    container_name: sorm-server
+    ports:
+      - "9931:9931"   # SORM Server (mTLS-enabled)
+      - "9990:9990"   # Management (HTTP)
+    volumes:
+      - sorm-logs:/app/logs
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=15d
+    ports:
+      - "9090:9090"
+    depends_on:
+      - sorm-server
+
+  loki:
+    image: grafana/loki
+    container_name: loki
+    command: ["-config.file=/etc/loki/local-config.yaml"]
+    ports:
+      - "3100:3100"
+    volumes:
+      - loki-data:/loki
+
+  promtail:
+    image: grafana/promtail
+    container_name: promtail
+    command: ["-config.file=/etc/promtail/config.yml"]
+    volumes:
+      - ./promtail/config.yml:/etc/promtail/config.yml:ro
+      - sorm-logs:/var/log/app:ro
+    depends_on:
+      - loki
+      - sorm-server
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    environment:
+      # Uncomment to set admin password via env; by default it's admin/admin
+      # - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_DEFAULT_THEME=light
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+      - loki
+
+volumes:
+  loki-data:
+  sorm-logs:

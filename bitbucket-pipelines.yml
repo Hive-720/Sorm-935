@@ -1,0 +1,59 @@
+image: eclipse-temurin:21-jdk
+
+pipelines:
+  default:
+    - step:
+        name: Build and Test
+        caches:
+          - gradle
+        script:
+          # Make gradlew executable
+          - chmod +x gradlew
+          # Clean and build the project
+          - ./gradlew clean build
+          # Run tests
+          - ./gradlew test
+        artifacts:
+          - build/libs/*.jar
+          - build/reports/**
+    - step:
+        name: Security Scan
+        script:
+          # Run a security scan for sensitive data.
+          # See more security tools at https://bitbucket.org/product/features/pipelines/integrations?&category=security
+          - pipe: atlassian/git-secrets-scan:0.5.1
+
+  #    - step:
+  #        name: Code Quality Check
+  #        caches:
+  #          - gradle
+  #        script:
+  #          - chmod +x gradlew
+  #          # Run code quality checks
+  #          - ./gradlew check
+  #        artifacts:
+  #          - build/reports/**
+
+  #      # This step could be used to deploy to a test server
+  #      - step:
+  #          name: Deploy
+  #          deployment: test
+  #          script:
+  #            - echo "Deploying to test..."
+  #            # Add deployment commands here
+
+  pull-requests:
+    '**':
+      - step:
+          name: Build and Test PR
+          caches:
+            - gradle
+          script:
+            - chmod +x gradlew
+            - ./gradlew clean build test
+          artifacts:
+            - build/reports/**
+
+definitions:
+  caches:
+    gradle: ~/.gradle/caches
