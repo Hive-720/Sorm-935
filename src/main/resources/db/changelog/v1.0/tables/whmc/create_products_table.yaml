@@ -1,0 +1,36 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_products_table
+      author: iklakotsky
+      changes:
+        - createTable:
+            tableName: products
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: type
+                  type: VARCHAR(50)
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: pay_type
+                  type: VARCHAR(50)
+              - column:
+                  name: prices
+                  type: JSONB
+              - column:
+                  name: updated_at
+                  type: TIMESTAMPTZ
+              - column:
+                  name: deleted
+                  type: BOOL
+                  defaultValueBoolean: false

@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_scheduler_task_table
+      author: iklakotsky
+      changes:
+        - createTable:
+            tableName: scheduler_tasks
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: scheduler_type
+                  type: VARCHAR(255)
+              - column:
+                  name: cursor
+                  type: VARCHAR(255)
+              - column:
+                  name: offset
+                  type: BIGINT
+              - column:
+                  name: status
+                  type: VARCHAR(255)
+              - column:
+                  name: start_at
+                  type: TIMESTAMPTZ
+              - column:
+                  name: finish_at
+                  type: TIMESTAMPTZ

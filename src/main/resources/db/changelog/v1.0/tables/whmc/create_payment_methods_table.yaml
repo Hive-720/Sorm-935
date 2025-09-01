@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_payment_methods_table
+      author: iklakotsky
+      changes:
+        - createTable:
+            tableName: payment_methods
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: module
+                  type: VARCHAR(255)
+              - column:
+                  name: display_name
+                  type: VARCHAR(255)
+              - column:
+                  name: updated_at
+                  type: TIMESTAMPTZ
+              - column:
+                  name: deleted
+                  type: BOOL
+                  defaultValueBoolean: false

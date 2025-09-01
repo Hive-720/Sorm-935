@@ -1,0 +1,27 @@
+spring:
+  graphql:
+    path: /query
+    graphiql:
+      enabled: true
+    schema:
+      printer:
+        enabled: true
+    websocket:
+      path: /subscription
+      connection-init-timeout: 10000s
+      keep-alive: 3000000s
+  r2dbc:
+    username: postgres
+    password: 123
+    url: r2dbc:postgresql://host.docker.internal:5433/Sorm?currentSchema=sorm_schema
+    pool:
+      enabled: true
+      initial-size: 10
+      max-idle-time: 1m
+      max-size: 30
+  liquibase:
+    url: jdbc:postgresql://host.docker.internal:5433/Sorm?currentSchema=sorm_schema
+    user: postgres
+    password: 123
+    driver-class-name: org.postgresql.Driver
+    default-schema: sorm_schema

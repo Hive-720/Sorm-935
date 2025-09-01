@@ -1,0 +1,47 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_orders_table
+      author: iklakotsky
+      changes:
+        - createTable:
+            tableName: orders
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: client_id
+                  type: BIGINT
+              - column:
+                  name: contact_id
+                  type: BIGINT
+              - column:
+                  name: invoice_id
+                  type: BIGINT
+              - column:
+                  name: amount
+                  type: DECIMAL(19, 2)
+              - column:
+                  name: currency
+                  type: VARCHAR(3)
+              - column:
+                  name: payment_method
+                  type: VARCHAR(255)
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+              - column:
+                  name: ip_address
+                  type: VARCHAR(100)
+              - column:
+                  name: payment_method_name
+                  type: VARCHAR(255)
+              - column:
+                  name: payment_status
+                  type: VARCHAR(100)
+              - column:
+                  name: date
+                  type: TIMESTAMPTZ

@@ -1,3 +1,19 @@
+directive @Size(min : Int = 0, max : Int = 2147483647, message : String = "graphql.validation.Size.message")
+on ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @Pattern(regexp : String! =".*", message : String = "graphql.validation.Pattern.message")
+on ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @PositiveOrZero(message : String = "graphql.validation.PositiveOrZero.message")
+on ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @ContainerSize(min : Int = 0, max : Int = 2147483647, message : String = "graphql.validation.ContainerSize.message")
+on ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @Range(min : Int = 0, max : Int = 2147483647, message : String = "graphql.validation.Range.message")
+on ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
+
+
 type Query {
     request: QueryMessage!
     getSchema: String!
@@ -8,58 +24,572 @@ type QueryMessage {
     offline: Boolean!
     maxPageSize: Int
 
-    users(filter: UserFilterInput!, offset: Int, limit: Int): UserResult!
-    comments(filter: CommentFilterInput!, offset: Int, limit: Int): CommentResult!
+    clients(filter: ClientFilterInput!, offset: Int @PositiveOrZero, limit: Int = 25 @Range(min: 1, max: 100), cursor: String @Pattern(regexp: "^[1-9]\\d*$") @Size(min: 1)): ClientResult!
+    clientLogins(filter: ClientLoginFilterInput!, offset: Int @PositiveOrZero, limit: Int = 25 @Range(min: 1, max: 100), cursor: String @Pattern(regexp: "^[1-9]\\d*$") @Size(min: 1)): ClientLoginResult!
+    clientGroups(filter: ClientGroupFilterInput!, offset: Int @PositiveOrZero, limit: Int = 25 @Range(min: 1, max: 100), cursor: String @Pattern(regexp: "^[1-9]\\d*$") @Size(min: 1)): ClientGroupResult!
+    clientProducts(filter: ClientProductFilterInput!, offset: Int @PositiveOrZero, limit: Int = 25 @Range(min: 1, max: 100), cursor: String @Pattern(regexp: "^[1-9]\\d*$") @Size(min: 1)): ClientProductResult!
+    users(filter: UserFilterInput!, offset: Int @PositiveOrZero, limit: Int = 25 @Range(min: 1, max: 100), cursor: String @Pattern(regexp: "^[1-9]\\d*$") @Size(min: 1)): UserResult!
+    contacts(filter: ContactFilterInput!, offset: Int @PositiveOrZero, limit: Int = 25 @Range(min: 1, max: 100), cursor: String @Pattern(regexp: "^[1-9]\\d*$") @Size(min: 1)): ContactResult!
+    affiliates(filter: AffiliateFilterInput!, offset: Int @PositiveOrZero, limit: Int = 25 @Range(min: 1, max: 100), cursor: String @Pattern(regexp: "^[1-9]\\d*$") @Size(min: 1)): AffiliateResult!
+    orders(filter: OrderFilterInput!, offset: Int @PositiveOrZero, limit: Int = 25 @Range(min: 1, max: 100), cursor: String @Pattern(regexp: "^[1-9]\\d*$") @Size(min: 1)):  OrderResult!
+    invoices(filter: InvoiceFilterInput!, offset: Int @PositiveOrZero, limit: Int = 25 @Range(min: 1, max: 100), cursor: String @Pattern(regexp: "^[1-9]\\d*$") @Size(min: 1)): InvoiceResult!
+    transactions(filter: TransactionFilterInput!, offset: Int @PositiveOrZero, limit: Int = 25 @Range(min: 1, max: 100), cursor: String @Pattern(regexp: "^[1-9]\\d*$") @Size(min: 1)): TransactionResult!
+    credits(filter: CreditFilterInput!, offset: Int @PositiveOrZero, limit: Int = 25 @Range(min: 1, max: 100), cursor: String @Pattern(regexp: "^[1-9]\\d*$") @Size(min: 1)): CreditResult!
+    products(filter: ProductFilterInput!, offset: Int @PositiveOrZero, limit: Int = 25 @Range(min: 1, max: 100), cursor: String @Pattern(regexp: "^[1-9]\\d*$") @Size(min: 1)): ProductResult!
+    activityLog(filter: ActivityLogFilterInput!, offset: Int @PositiveOrZero, limit: Int = 25 @Range(min: 1, max: 100), cursor: String @Pattern(regexp: "^[1-9]\\d*$") @Size(min: 1)): ActivityLogResult!
+    paymentMethods(filter: PaymentMethodFilterInput!, offset: Int @PositiveOrZero, limit: Int = 25 @Range(min: 1, max: 100), cursor: String @Pattern(regexp: "^[1-9]\\d*$") @Size(min: 1)): PaymentMethodResult!
+    emails(filter: EmailFilterInput!, offset: Int @PositiveOrZero, limit: Int = 25 @Range(min: 1, max: 100), cursor: String @Pattern(regexp: "^[1-9]\\d*$") @Size(min: 1)): EmailResult!
 }
 
-input CommentFilterInput {
-    and: [CommentFilterInput]
-    or: [CommentFilterInput]
-    not: CommentFilterInput
-    userId: String
-    text: String
+type ClientResult {
+    cursor: String
+    hasNextPage: Boolean
+    result: [Client!]
 }
 
-input UserFilterInput {
-    and: [UserFilterInput]
-    or: [UserFilterInput]
-    not: UserFilterInput
-    name: String
-    age: Int
+type ClientLoginResult {
+    cursor: String
+    hasNextPage: Boolean
+    result: [ClientLogin!]
+}
+
+type ClientGroupResult {
+    cursor: String
+    hasNextPage: Boolean
+    result: [ClientGroup!]
+}
+
+type ClientProductResult {
+    cursor: String
+    hasNextPage: Boolean
+    result: [ClientProduct!]
+}
+
+type AffiliateResult {
+    cursor: String
+    hasNextPage: Boolean
+    result: [Affiliate!]
+}
+
+type OrderResult {
+    cursor: String
+    hasNextPage: Boolean
+    result: [Order!]
 }
 
 type UserResult {
+    cursor: String
     hasNextPage: Boolean
     result: [User!]
 }
 
-type CommentResult {
+type ContactResult {
+    cursor: String
     hasNextPage: Boolean
-    result: [Comment!]
+    result: [Contact!]
 }
 
+type InvoiceResult {
+    cursor: String
+    hasNextPage: Boolean
+    result: [Invoice!]
+}
+
+type TransactionResult {
+    cursor: String
+    hasNextPage: Boolean
+    result: [Transaction!]
+}
+
+type CreditResult {
+    cursor: String
+    hasNextPage: Boolean
+    result: [Credit!]
+}
+
+type ProductResult {
+    cursor: String
+    hasNextPage: Boolean
+    result: [Product!]
+}
+
+type ActivityLogResult {
+    cursor: String
+    hasNextPage: Boolean
+    result: [ActivityLog!]
+}
+
+type EmailResult {
+    cursor: String
+    hasNextPage: Boolean
+    result: [Email!]
+}
+
+type PaymentMethodResult {
+    cursor: String
+    hasNextPage: Boolean
+    result: [PaymentMethod!]
+}
+
+
+
+#Основная сущность представляющая собой юридическое или физическое лицо которое владеет услугами и доменами.
+type Client {
+    id: ID #Уникальный идентификатор
+    userOwner: User # Пользователь владелец
+    clientGroup: ClientGroup #Группа
+    name: PersonBase
+    organizationInfo: OrganizationInfoBase
+    inn: InnBase
+    email: EmailBase
+    address: AddressBase
+    msisdn: MsisdnBase
+    mcc: MccBase
+    phoneNumber: String #Номер телефона (без кода страны)
+    defaultGateway: String #Системное имя платежного метода по умолчанию
+    telegram: String #Имя пользователя в мессенджере телеграм
+    jabber: String #Идентификатор абонента протокола обмена мгновенными сообщениями (XMPP)
+    currency: String #Валюта по умолчанию
+    status: String #Статус аккаунта(Active, Inactive)
+    credit: Float #Текущий кредитный баланс клиента
+    taxExempt: Boolean #Освобожден ли клиент от уплаты налогов
+    language: String #Язык по умолчанию
+    dateCreated: DateTimeBase #Дата создания
+    deleted: Boolean #Является ли удаленным
+}
+
+#Аутентификации клиента.
+type ClientLogin {
+    id: ID #Уникальный идентификатор
+    client: Client #Клиент который осуществил аутентификацию
+    ipAddress: IpAddressBase
+    date: DateTimeBase #Дата аутентификации клиента
+}
+
+#Сущность которая ипользуются для сегментации клиентов, обеспечивая индивидуальный подход к ценообразованию и автоматизации.
+type ClientGroup {
+    id: ID #Уникальный идентификатор
+    name: String #Название группы
+    discountPercent: Float #Общая скидка в процентах, которая автоматически применяется ко всем заказам
+    updatedAt: DateTimeBase #Дата последнего обновления группы
+    deleted: Boolean #Является ли удаленной
+}
+
+#Продукты или услуги которые приобрел клиент.
+type ClientProduct {
+    id: ID #Уникальный идентификатор
+    client: Client #Клиент которому приобрел продукт/услугу
+    order: Order #Ордер этого приобретенного продукта
+    product: Product #Приобретенный продукт в исходном виде
+    name: String #Название продукта/услуги
+    domain: DomainNameBase #Доменное имя или основной IP-адрес
+    dedicatedIpAddress: IpAddressBase #Выделенный IP-адрес, присвоенный этому продукту/услуге
+    firstPaymentAmount: Float #Сумма первого платежа
+    recurringAmount: Float #Рекуррентная сумма (стоимость продления) для этой услуги
+    billingCycle: String #Цикл выставления счетов (например, Monthly, Annually, Free Account)
+    status: String #Текущий статус услуги (Pending, Active, Suspended, Terminated, Cancelled)
+    assignedIpAddresses: [IpAddressBase] #Список всех IP-адресов, выделенных этой услуге
+    configs: [ConfigValues] #Список с выбранными конфигурациями и их значениями продукта/услуги
+    regDate: DateTimeBase #Дата регистрации (активации) этой услуги.
+    lastUpdate: DateTimeBase #Дата последнего обновления
+    nextDueDate: DateTimeBase #Следующая дата оплаты
+}
+
+#Опции продукта которые выбрал клиент.
+type ConfigValues {
+    id: ID #Уникальный идентификатор
+    option: String #Название опции
+    type: String #Тип
+    value: String #Значение опции
+}
+
+#Реферальная программа для получения комиссии за привлечение новых клиентов.
+type Affiliate {
+    id: ID #Уникальный идентификатор
+    client: Client #Клиент которому принадлежит эта партнерская сущность
+    visitors: Int #Общее количество кликов по партнерской ссылке
+    payType: String #Тип комиссии, которую получает партнер (percentage — процент, fixed — фиксированная сумма)
+    payAmount: String #Сумма комиссии. Если payType — percentage, это процент; если fixed, это сумма в валюте
+    oneTime: Boolean #Флаг, указывающий, является ли комиссия единовременной или рекуррентной
+    balance: Float #Доступная сумма, готовый к выводу
+    withdrawn: Float #Общая сумма, которая была выплачена по партнерской программе
+    date: DateTimeBase #Дата активации партнерского аккаунта
+    createdAt: DateTimeBase #Дата создания
+    updatedAt: DateTimeBase #Дата последнего обновления
+}
+
+#Запись о первоначальном запросе клиента на покупку продуктов или услуг.
+type Order {
+    id: ID #Уникальный идентификатор
+    client: Client #Клиент, которому принадлежит данный ордер
+    contact: Contact #Контакт, которому принадлежит данный ордер
+    invoice: Invoice #Выставленный счет на этот ордер
+    amount: Float #Общая сумма заказа
+    currency: String #Валюта
+    status: String #Статус заказа
+    ipAddress: IpAddressBase #IP-адрес, с которого был размещен заказ
+    paymentMethod: String #Системное имя выбранного платежного шлюза для оплаты заказа
+    paymentMethodName: String #Отображаемое имя платежного шлюза
+    paymentStatus: String #Текущий статус заказа (Pending-Ожидание, Active-Активен, Fraud-Мошенничество, Cancelled-Отменен)
+    items: [OrderItem] #Детализированные позиции Заказа
+    date: DateTimeBase #Дата и время размещения заказа
+}
+
+#Детализированные позиции заказа.
+type OrderItem {
+    relId: ID #Уникальный идентификатор
+    type: String #Тип позиции в заказе
+    productType: String #Общий тип услуги, к которой относится продукт
+    productName: String #Название продукта/услуги
+    domain: DomainNameBase #Домен или IP-адрес, связанный с этой услугой
+    billingCycle: String #Цикл выставления счетов для этой услуги (Monthly, Annually)
+    amount: Float #Стоимость этой позиции в заказе
+    status: String #Статус услуги/продукта после выполнения заказа (Pending-Ожидание, Active-Активен, Suspended-Приостановлен, Terminated-Прекращен, Cancelled-Отменен, Fraud-Мошенничество
+}
+
+#Лицо, которое непосредственно использует систему для доступа к сервисам.
+#Пользователь может приглашать другого пользователя присоединиться к его клиенту и выполнять действия согласно установленным правам.
 type User {
-    id: String!
-    name: String!
-    comments(offset: Int, limit: Int): CommentResult!
+    id: ID #Уникальный идентификатор
+    name: PersonBase
+    email: EmailBase
+    clients: [Client] #Список клиентских аккаунтов в которых числится данный пользователь
+    dateCreated: DateTimeBase #Дата создания пользователя
 }
 
-type Comment {
-    id: String!
-    userId: String!
-    text: String!
+#Дополнительный, неосновной человек или отдел, связанный с конкретной учетной записью клиента.
+type Contact {
+    id: ID #Уникальный идентификатор
+    client: Client #Клиент, которому принадлежт данный контакт
+    name: PersonBase
+    organizationInfo: OrganizationInfoBase
+    email: EmailBase
+    address: AddressBase
+    inn: InnBase
+    msisdn: MsisdnBase
+    createdAt: DateTimeBase #Дата создания пользователя
+    updatedAt: DateTimeBase #Дата последнего обновления пользователя
+    deleted: Boolean #Является ли удаленным
+}
+
+#Основной финансовый документ, представляющий собой официальное требование об оплате, выставленное клиенту.
+type Invoice {
+    id: ID #Уникальный идентификатор
+    client: Client #Клиент, которому выставлен этот счет
+    subTotal: Float #Сумма до применения налогов и скидок
+    credit: Float #Сумма кредита, которая была применена к данному счету из кредитного баланса клиента
+    total: Float #Итоговая сумма, подлежащая оплате. Subtotal - Credit + Tax + Tax2
+    balance: Float #Остаток к оплате по счету
+    tax: Float #Сумма налога первого уровня, начисленного на счет
+    tax2: Float #Сумма налога второго уровня, начисленного на счет (если используется сложная система налогообложения)
+    taxRate: Float #Ставка налога (в процентах, деленных на 100) для первого уровня
+    taxRate2: Float #Ставка налога (в процентах, деленных на 100) для второго уровня
+    status: String #Текущий статус счета. (Paid, Unpaid, Cancelled, Refunded, Draft, Collections, Payment Pending)
+    paymentMethod: String #Системное имя платежного шлюза, выбранного для оплаты счета
+    currency: String #Валюта
+    items: [InvoiceItem] #Список детализированных позиций которые входят в этот счет
+    date: DateTimeBase #Дата создания/выставления счета
+    dueDate: DateTimeBase #Крайний срок оплаты счета
+    datePaid: DateTimeBase #Дата и время полной оплаты счета
+    dateRefunded: DateTimeBase #Дата и время, возврата по счету
+    dateCancelled: DateTimeBase #Дата и время, когда счет был аннулирован
+    createdAt: DateTimeBase #Дата создания записи
+    updatedAt: DateTimeBase #Дата обновления записи
+}
+
+# Детализированные позиции в счете
+type InvoiceItem {
+    relId: ID #Уникальный идентификатор
+    type: String #Тип позиции
+    description: String #Описание позиции
+    amount: Float #Сумма этой отдельной позиции
+    taxed: Boolean #Флаг, указывающий, облагается ли эта позиция налогом
+}
+
+#Финансовая запись, фиксирующая движение средств: входящие платежи, исходящие возвраты и комиссии.
+type Transaction {
+    id: ID #Уникальный идентификатор
+    invoice: Invoice #Идентификатор счета который был оплачен данной транзакцией
+    client: Client #Клиент совершивший оплату или в пользу которого произведена выплата
+    transId: String #Внешний ID транзакции (идентификатор, предоставленный самим платежным шлюзом: PayPal, UnitPay и тд)
+    refundId: ID #ID исходной Транзакции, если текущая запись является возвратом
+    currency: String  #Валюта
+    gateway: String #Платежный шлюз (метод), через который была проведена транзакция, например: paypal, stripe, unitpay
+    description: String #Описание
+    amountIn: Float #Сумма оплаты
+    amountOut: Float #Сумма выплаты
+    fees: Float #Комиссия
+    rate: Float #Обменный курс
+    date: DateTimeBase #Дата совершения транзакции
+}
+
+#Средства, которые клиент внес на свой счет, но которые еще не были применены для оплаты
+type Credit {
+    id: ID #Уникальный идентификатор
+    relId: ID #Идентификатор связанной сущности
+    client: Client #Клиент на аккаунт которого зачислены кредиты
+    description: String #Описание
+    amount: Float #Сумма
+    date: DateTimeBase #Дата создания этой записи
+}
+
+#Сущность, определяющая конфигурацию, ценообразование и логику провизионирования конкретной продаваемой услуги/продукта.
+type Product {
+    id: ID #Уникальный идентификатор
+    type: String #Тип продукта/услуги. Определяет общую категорию услуги
+    name: String #Название продукта (пакета услуг)
+    description: String #Полное описание продукта/услуги
+    payType: String #Тип оплаты для продукта/услуги. Может быть recurring-регулярный, onetime-единовременный или free
+    prices: [Price] #Список детализированных стоимостей продукта/услуги в различных валютах
+    configs: [ProductConfig] #Список различных настраиваемых оций продукта/услуги
+    updatedAt: DateTimeBase #Дата последнего обновления
+    deleted: Boolean #Является ли удаленным
+}
+
+#Настраеваемая опция продукта/услуги (например количество оперативной памяти сервера)
+type ProductConfig {
+    id: ID #Уникальный идентификатор
+    name: String #Название опции (например: Internet с защитой от DDoS)
+    type: String #Тип опции
+    options: [ProductConfigOption] #Список вариантов для выбора значения опции
+}
+
+#Вариант выбора настраиваемой опции продукта/услуги
+type ProductConfigOption {
+    id: ID #Уникальный идентификатор
+    name: String #Название варианта (например: С защитой 10 Mbit)
+    prices: [Price] #Список детализированных стоимостей данного значения опции в различных валютах
+}
+
+#Цена продукта/услуги или их конкретной опции
+type Price {
+    currency: String #Валюта
+    mSetupFee: Float #Разовая сумма для месячного цикла
+    qSetupFee: Float #Разовая сумма для квартального цикла
+    sSetupFee: Float #Разовая сумма для полугодового цикла
+    aSetupFee: Float #Разовая сумма для годового цикла
+    bSetupFee: Float #Разовая сумма для двухгодичного цикла
+    tSetupFee: Float #Разовая сумма для трехгодичного цикла
+    monthly: Float #Сумма для регулярной оплаты ежемесячно
+    quarterly: Float #Сумма для регулярной оплаты ежеквартально
+    semiannually: Float #Сумма для регулярной оплаты каждые пол года
+    annually: Float #Сумма для регулярной оплаты ежегодно
+    biennially: Float #Сумма для регулярной оплаты каждые два года
+    triennially: Float #Сумма для регулярной оплаты каждые три года
+}
+
+#Различные пользовательские события (например: удаление контакта)
+type ActivityLog {
+    id: ID #Уникальный идентификатор
+    client: Client #Клиент который участвует в данном событии
+    user: User #Пользователь который участвует в данном событии
+    description: String #Описание события
+    username: LoginBase #Имя пользователя который инициировал событие (как правило это email)
+    ipAddress: IpAddressBase #IP аддресс откуда инициировано событие
+    date: DateTimeBase #Дата возникновения события
+}
+
+#Электронные письма
+type Email {
+    id: ID #Уникальный идентификатор
+    client: Client #Клиент которй получил данное электронное письмо
+    subject: String #Заголовок письма
+    messageBody: String #Содержимое письма
+    to: EmailBase #Электронная почта получатель письма
+    cc: [EmailBase] #Адреса получателей копии. (Адреса, указанные здесь, видны всем остальным получателям)
+    bcc: [EmailBase] #Адреса скрытых получателей копии. Адреса, указанные в этом поле, не видны другим получателям в полях to и cc
+    date: DateTimeBase #Указывает точное время, когда отправитель нажал «Отправить» и письмо попало в систему доставки
+    createdAt: DateTimeBase #Дата создания
+    updatedAt: DateTimeBase #Дата последнего обновления
+}
+
+#Способы оплаты продукта/услуги
+type PaymentMethod {
+    id: ID #Уникальный идентификатор
+    moduleName: String #Системное название метода
+    displayName: String #Отображаемое название метода
+    updatedAt: DateTimeBase #Дата последнего обновления
+    deleted: Boolean #Является ли удаленный
+}
+
+
+
+
+input ClientFilterInput {
+    name: PersonBaseFilter
+    userOwner: UserFilterInput
+    organizationInfo: OrganizationInfoBaseFilter
+    inn: InnBaseFilter
+    email: EmailBaseFilter
+    msisdn: MsisdnBaseFilter
+    mcc: MccBaseFilter
+    address: AddressBaseFilter
+    clientGroup: ClientGroupFilterInput
+    createdAt: DateTimeBaseFilter
+    and: [ClientFilterInput]
+    or: [ClientFilterInput]
+    not: ClientFilterInput
+}
+
+input ClientLoginFilterInput {
+    client: ClientFilterInput
+    ipAddress: IpAddressBaseFilter
+    date: DateTimeBaseFilter
+    and: [ClientLoginFilterInput]
+    or: [ClientLoginFilterInput]
+    not: ClientLoginFilterInput
+}
+
+input ClientGroupFilterInput {
+    updatedAt: DateTimeBaseFilter
+    and: [ClientGroupFilterInput]
+    or: [ClientGroupFilterInput]
+    not: ClientGroupFilterInput
+}
+
+input ClientProductFilterInput {
+    client: ClientFilterInput
+    order: OrderFilterInput
+    product: ProductFilterInput
+    domain: DomainNameBaseFilter
+    dedicatedIpAddress: IpAddressBaseFilter
+    assignedIpAddresses: IpAddressBaseFilter
+    regDate: DateTimeBaseFilter
+    nextDueDate: DateTimeBaseFilter
+    lastUpdate: DateTimeBaseFilter
+    and: [ClientProductFilterInput]
+    or: [ClientProductFilterInput]
+    not: ClientProductFilterInput
+}
+
+input ContactFilterInput {
+    client: ClientFilterInput
+    name: PersonBaseFilter
+    organizationInfo: OrganizationInfoBaseFilter
+    email: EmailBaseFilter
+    address: AddressBaseFilter
+    inn: InnBaseFilter
+    msisdn: MsisdnBaseFilter
+    updatedAt: DateTimeBaseFilter
+    createdAt: DateTimeBaseFilter
+    and: [ContactFilterInput]
+    or: [ContactFilterInput]
+    not: ContactFilterInput
+}
+
+input UserFilterInput {
+    name: PersonBaseFilter
+    email: EmailBaseFilter
+    and: [UserFilterInput]
+    or: [UserFilterInput]
+    not: UserFilterInput
+}
+
+input AffiliateFilterInput {
+    client: ClientFilterInput
+    date: DateTimeBaseFilter
+    createdAt: DateTimeBaseFilter
+    updatedAt: DateTimeBaseFilter
+    and: [AffiliateFilterInput]
+    or: [AffiliateFilterInput]
+    not: AffiliateFilterInput
+}
+
+input OrderFilterInput {
+    client: ClientFilterInput
+    invoice: InvoiceFilterInput
+    ipAddress: IpAddressBaseFilter
+    items: OrderItemFilter
+    date: DateTimeBaseFilter
+    and: [OrderFilterInput]
+    or: [OrderFilterInput]
+    not: OrderFilterInput
+}
+
+input OrderItemFilter {
+    domain: DomainNameBaseFilter
+    and: [OrderItemFilter]
+    or: [OrderItemFilter]
+    not: OrderItemFilter
+}
+
+input InvoiceFilterInput {
+    client: ClientFilterInput
+    date: DateTimeBaseFilter
+    dueDate: DateTimeBaseFilter
+    datePaid: DateTimeBaseFilter
+    dateRefunded: DateTimeBaseFilter
+    dateCancelled: DateTimeBaseFilter
+    createdAt: DateTimeBaseFilter
+    updatedAt: DateTimeBaseFilter
+    and: [InvoiceFilterInput]
+    or: [InvoiceFilterInput]
+    not: InvoiceFilterInput
+}
+
+input TransactionFilterInput {
+    date: DateTimeBaseFilter
+    invoice: InvoiceFilterInput
+    client: ClientFilterInput
+    and: [TransactionFilterInput]
+    or: [TransactionFilterInput]
+    not: TransactionFilterInput
+}
+
+input CreditFilterInput {
+    client: ClientFilterInput
+    date: DateTimeBaseFilter
+    and: [CreditFilterInput]
+    or: [CreditFilterInput]
+    not: CreditFilterInput
+}
+
+input ProductFilterInput {
+    updatedAt: DateTimeBaseFilter
+    and: [ProductFilterInput]
+    or: [ProductFilterInput]
+    not: ProductFilterInput
+}
+
+input ActivityLogFilterInput {
+    client: ClientFilterInput
+    username: LoginBaseFilter
+    ipAddress: IpAddressBaseFilter
+    date: DateTimeBaseFilter
+    and: [ActivityLogFilterInput]
+    or: [ActivityLogFilterInput]
+    not: ActivityLogFilterInput
+}
+
+input EmailFilterInput {
+    client: ClientFilterInput
+    date: DateTimeBaseFilter
+    to: EmailBaseFilter
+    cc: EmailBaseFilter
+    bcc: EmailBaseFilter
+    createdAt: DateTimeBaseFilter
+    updatedAt: DateTimeBaseFilter
+    and: [EmailFilterInput]
+    or: [EmailFilterInput]
+    not: EmailFilterInput
+}
+
+input PaymentMethodFilterInput {
+    updatedAt: DateTimeBaseFilter
+    and: [PaymentMethodFilterInput]
+    or: [PaymentMethodFilterInput]
+    not: PaymentMethodFilterInput
 }
 
 type Subscription {
     trap: Trap!
-#    statusOfflineRequest(requestID: String!): String!
 }
 
 type Trap {
     type: TrapType!
     message: String
-#    startsAt: DateTimeBase!
-#    metricalerts: MetricAlerts
+    startsAt: DateTimeBase!
+    metricalerts: MetricAlerts
 }
 
 enum TrapType {
@@ -72,39 +602,238 @@ enum TrapType {
     METRICALERTS
 }
 
-##15. Информация о дате и времени события
-#type DateTimeBase {
-#    #YYYY-MM-DDThh:mm:ssthh:mm (в UTC)
-#    utc: String!
-#}
-#
-#type MetricAlerts {
-#    groupKey: String!
-#    status: AlertStatus!
-#    receiver: String!
-#    groupLabels: [KeyValueRef!]!
-#    commonLabels: [KeyValueRef!]!
-#    commonAnnotations: [KeyValueRef!]!
-#    externalURL: String!
-#    alerts: [Alert!]!
-#}
-#
-#enum AlertStatus {
-#    RESOLVED
-#    FIRING
-#}
-#
-#type Alert {
-#    status: AlertStatus!
-#    labels: [KeyValueRef!]!
-#    annotations: [KeyValueRef!]!
-#    startAt: DateTimeBase!
-#    endsAt: DateTimeBase!
-#    generatorURL: String!
-#    fingerprint: String!
-#}
-#
-#type KeyValueRef {
-#    key: String!
-#    value: String!
-#}
+type MetricAlerts {
+    groupKey: String!
+    status: AlertStatus!
+    receiver: String!
+    groupLabels: [KeyValueRef!]!
+    commonLabels: [KeyValueRef!]!
+    commonAnnotations: [KeyValueRef!]!
+    externalURL: String!
+    alerts: [Alert!]!
+}
+
+enum AlertStatus {
+    RESOLVED
+    FIRING
+}
+
+type Alert {
+    status: AlertStatus!
+    labels: [KeyValueRef!]!
+    annotations: [KeyValueRef!]!
+    startAt: DateTimeBase!
+    endsAt: DateTimeBase!
+    generatorURL: String!
+    fingerprint: String!
+}
+
+type KeyValueRef {
+    key: String!
+    value: String!
+}
+
+type DateTimeBase {
+    utc: String!
+}
+
+type MsisdnBase {
+    msisdn: String!
+}
+
+type MccBase {
+    mcc: Int!
+}
+
+type EmailBase {
+    email: String!
+}
+
+type AddressBase {
+    address: String
+    zip: String
+    country: String
+    region: String
+    city: String
+}
+
+type PersonBase {
+    fullName: String!
+    firstName: String
+    lastName: String
+}
+
+type OrganizationInfoBase {
+    nameFull: String
+}
+
+type InnBase {
+    inn: String!
+}
+
+type IpAddressBase {
+    ip: String!
+    type: IpType
+}
+
+enum IpType {
+    IPV4
+    IPV6
+}
+
+type LoginBase {
+    login: String!
+}
+
+type DomainNameBase {
+    domainName: String!
+}
+
+
+
+
+input AddressBaseFilter {
+    address: StringRegExpFullTextFilter
+    zip: StringExactFilter
+    country: StringExactFilter
+    region: StringExactFilter
+    city: StringExactFilter
+    and: [AddressBaseFilter] @ContainerSize(min: 1, max: 25)
+    or: [AddressBaseFilter] @ContainerSize(min: 1, max: 25)
+    not: AddressBaseFilter
+}
+
+input PersonBaseFilter {
+    fullName: StringTermFullTextFilter
+    name: StringTermExactFilter
+    lastName: StringTermExactFilter
+    and: [PersonBaseFilter] @ContainerSize(min: 1, max: 25)
+    or: [PersonBaseFilter] @ContainerSize(min: 1, max: 25)
+    not: PersonBaseFilter
+}
+
+input DateTimeBaseFilter {
+    utc: DateTimeStringFilter
+    and: [DateTimeBaseFilter] @ContainerSize(min: 1, max: 25)
+    or: [DateTimeBaseFilter] @ContainerSize(min: 1, max: 25)
+    not: [DateTimeBaseFilter] @ContainerSize(min: 1, max: 25)
+}
+
+
+input StringTermExactFilter {
+    allofterms: String @Size(max: 1500)
+    anyofterms: String @Size(max: 1500)
+    eq: String @Size(max: 500)
+    in: [String] @ContainerSize(min: 1, max: 300) @Size(max: 500)
+}
+
+input StringRegExpExactFilter {
+    regexp: String @Size(max: 1500)
+    eq: String @Size(max: 500)
+    in: [String] @ContainerSize(min: 1, max: 300) @Size(max: 500)
+}
+
+input StringTermFullTextFilter {
+    allofterms: String @Size(max: 1500)
+    anyofterms: String @Size(max: 1500)
+    alloftext: String @Size(max: 1500)
+    anyoftext: String @Size(max: 1500)
+}
+
+input StringExactFilter {
+    eq: String @Size(max: 500)
+    in: [String] @ContainerSize(min: 1, max: 300) @Size(max: 500)
+}
+
+input StringRegExpFullTextFilter {
+    regexp: String @Size(max: 1500)
+    alloftext: String @Size(max: 1500)
+    anyoftext: String @Size(max: 1500)
+}
+
+input DateTimeStringFilter {
+    eq: String @Pattern(regexp: "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}[+-]\\d{2}:\\d{2}$")
+    in: [String] @Pattern(regexp: "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}[+-]\\d{2}:\\d{2}$") @ContainerSize(min: 1, max: 300)
+    le: String @Pattern(regexp: "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}[+-]\\d{2}:\\d{2}$")
+    lt: String @Pattern(regexp: "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}[+-]\\d{2}:\\d{2}$")
+    ge: String @Pattern(regexp: "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}[+-]\\d{2}:\\d{2}$")
+    gt: String @Pattern(regexp: "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}[+-]\\d{2}:\\d{2}$")
+    between: DateTimeRange
+}
+
+input DateTimeRange {
+    min: String! @Pattern(regexp: "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}[+-]\\d{2}:\\d{2}$")
+    max: String! @Pattern(regexp: "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}[+-]\\d{2}:\\d{2}$")
+}
+
+input OrganizationInfoBaseFilter {
+    nameFull: StringRegExpExactFilter
+    and: [OrganizationInfoBaseFilter] @ContainerSize(min: 1, max: 25)
+    or: [OrganizationInfoBaseFilter] @ContainerSize(min: 1, max: 25)
+    not: OrganizationInfoBaseFilter
+}
+
+input InnBaseFilter {
+    inn: StringTermExactFilter
+    and: [InnBaseFilter] @ContainerSize(min: 1, max: 25)
+    or: [InnBaseFilter] @ContainerSize(min: 1, max: 25)
+    not: InnBaseFilter
+}
+
+input EmailBaseFilter {
+    email: StringRegExpExactFilter
+    and: [EmailBaseFilter] @ContainerSize(min: 1, max: 25)
+    or: [EmailBaseFilter] @ContainerSize(min: 1, max: 25)
+    not: EmailBaseFilter
+}
+
+input MsisdnBaseFilter {
+    msisdn: StringRegExpExactFilter
+    and: [MsisdnBaseFilter] @ContainerSize(min: 1, max: 25)
+    or: [MsisdnBaseFilter] @ContainerSize(min: 1, max: 25)
+    not: MsisdnBaseFilter
+}
+
+input MccBaseFilter {
+    mcc: IntFilter
+    and: [MccBaseFilter] @ContainerSize(min: 1, max: 25)
+    or: [MccBaseFilter] @ContainerSize(min: 1, max: 25)
+    not: MccBaseFilter
+}
+
+input IntFilter {
+    eq: Int @PositiveOrZero
+    in: [Int] @ContainerSize(min: 1, max: 300) @PositiveOrZero
+    le: Int @PositiveOrZero
+    lt: Int @PositiveOrZero
+    ge: Int @PositiveOrZero
+    gt: Int @PositiveOrZero
+    between: IntRange
+}
+
+input IntRange {
+    min: Int! @PositiveOrZero
+    max: Int! @PositiveOrZero
+}
+
+input IpAddressBaseFilter {
+    ip: StringRegExpExactFilter
+    type: IpType
+    and: [IpAddressBaseFilter] @ContainerSize(min: 1, max: 25)
+    or: [IpAddressBaseFilter] @ContainerSize(min: 1, max: 25)
+    not: IpAddressBaseFilter
+}
+
+input LoginBaseFilter {
+    login: StringRegExpExactFilter
+    and: [LoginBaseFilter] @ContainerSize(min: 1, max: 25)
+    or: [LoginBaseFilter] @ContainerSize(min: 1, max: 25)
+    not: LoginBaseFilter
+}
+
+input DomainNameBaseFilter {
+    domainName: StringRegExpExactFilter
+    and: [DomainNameBaseFilter] @ContainerSize(min: 1, max: 25)
+    or: [DomainNameBaseFilter] @ContainerSize(min: 1, max: 25)
+    not: DomainNameBaseFilter
+}

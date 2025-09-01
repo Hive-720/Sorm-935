@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_system_metadata_table
+      author: iklakotsky
+      changes:
+        - createTable:
+            tableName: system_metadata
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  remarks: Primary key identifier
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                  autoIncrement: true
+              - column:
+                  name: component
+                  type: VARCHAR(1000)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: hash
+                  type: VARCHAR(1000)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMPTZ
+                  constraints:
+                    nullable: false

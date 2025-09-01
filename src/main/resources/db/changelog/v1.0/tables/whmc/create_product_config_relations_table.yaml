@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_client_user_relations_table
+      author: iklakotsky
+      changes:
+        - createTable:
+            tableName: product_config_relations
+            columns:
+              - column:
+                  name: product_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: product_config_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMPTZ
+        - addPrimaryKey:
+            columnNames: product_id, product_config_id
+            constraintName: pk_product_config_relations
+            tableName: product_config_relations

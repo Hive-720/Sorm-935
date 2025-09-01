@@ -1,0 +1,46 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_affiliates_table
+      author: iklakotsky
+      changes:
+        - createTable:
+            tableName: affiliates
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: client_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: visitors
+                  type: BIGINT
+              - column:
+                  name: pay_type
+                  type: VARCHAR(255)
+              - column:
+                  name: pay_amount
+                  type: DECIMAL(19, 2)
+              - column:
+                  name: one_time
+                  type: BOOL
+              - column:
+                  name: balance
+                  type: DECIMAL(19, 2)
+              - column:
+                  name: withdrawn
+                  type: DECIMAL(19, 2)
+              - column:
+                  name: date
+                  type: TIMESTAMPTZ
+              - column:
+                  name: created_at
+                  type: TIMESTAMPTZ
+              - column:
+                  name: updated_at
+                  type: TIMESTAMPTZ

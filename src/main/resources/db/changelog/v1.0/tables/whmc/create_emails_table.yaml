@@ -1,0 +1,45 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_emails_table
+      author: iklakotsky
+      changes:
+        - createTable:
+            tableName: emails
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: client_id
+                  type: BIGINT
+              - column:
+                  name: subject
+                  type: VARCHAR(255)
+              - column:
+                  name: message_body
+                  type: TEXT
+              - column:
+                  name: date
+                  type: TIMESTAMPTZ
+              - column:
+                  name: to
+                  type: VARCHAR(255)
+              - column:
+                  name: cc
+                  type: VARCHAR[]
+                  constraints:
+                    nullable: true
+              - column:
+                  name: bcc
+                  type: VARCHAR[]
+                  constraints:
+                    nullable: true
+              - column:
+                  name: created_at
+                  type: TIMESTAMPTZ
+              - column:
+                  name: updated_at
+                  type: TIMESTAMPTZ

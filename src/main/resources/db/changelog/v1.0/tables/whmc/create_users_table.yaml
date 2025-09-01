@@ -1,0 +1,38 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_users_table
+      author: iklakotsky
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: full_name
+                  type: VARCHAR(510)
+              - column:
+                  name: first_name
+                  type: VARCHAR(255)
+              - column:
+                  name: last_name
+                  type: VARCHAR(255)
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+              - column:
+                  name: date_created
+                  type: TIMESTAMPTZ
+
+  - changeSet:
+      id: add_full_text_search_to_users
+      author: iklakotsky
+      changes:
+        - sql:
+            sql: |
+              CREATE INDEX users_name_fts_idx ON users 
+              USING GIN(to_tsvector('simple', full_name));

@@ -1,0 +1,48 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_system_notifications_table
+      author: iklakotsky
+      changes:
+        - createTable:
+            tableName: system_notifications
+            remarks: Table for storing system notifications
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  remarks: Primary key identifier
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                  autoIncrement: true
+              - column:
+                  name: sent
+                  type: BOOLEAN
+                  defaultValue: false
+                  remarks: Flag indicating if notification was sent
+                  constraints:
+                    nullable: false
+              - column:
+                  name: message
+                  type: TEXT
+                  remarks: Notification message content
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMPTZ
+                  remarks: The timestamp of the event that created the notification
+                  constraints:
+                    nullable: false
+              - column:
+                  name: type
+                  type: VARCHAR(50)
+                  remarks: Type of notification (RESTARTDB, METRICALERTS, etc.)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: metric_alerts
+                  type: JSONB
+                  remarks: A JSON structure containing information about an alert with metrics
+                  constraints:
+                    nullable: true

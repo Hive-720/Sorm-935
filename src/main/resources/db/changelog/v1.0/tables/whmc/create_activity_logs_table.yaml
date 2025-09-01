@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_activity_logs_table
+      author: iklakotsky
+      changes:
+        - createTable:
+            tableName: activity_logs
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: client_id
+                  type: BIGINT
+              - column:
+                  name: user_id
+                  type: BIGINT
+              - column:
+                  name: date
+                  type: TIMESTAMPTZ
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: username
+                  type: VARCHAR(255)
+              - column:
+                  name: ip_address
+                  type: VARCHAR(100)

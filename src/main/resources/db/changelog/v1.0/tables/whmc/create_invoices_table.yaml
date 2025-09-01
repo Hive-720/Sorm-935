@@ -1,0 +1,74 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_invoices_table
+      author: iklakotsky
+      changes:
+        - createTable:
+            tableName: invoices
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: client_id
+                  type: BIGINT
+              - column:
+                  name: sub_total
+                  type: DECIMAL(19, 2)
+              - column:
+                  name: total
+                  type: DECIMAL(19, 2)
+              - column:
+                  name: credit
+                  type: DECIMAL(19, 2)
+              - column:
+                  name: balance
+                  type: DECIMAL(19, 2)
+              - column:
+                  name: tax
+                  type: DECIMAL(19, 2)
+              - column:
+                  name: tax2
+                  type: DECIMAL(19, 2)
+              - column:
+                  name: tax_rate
+                  type: DECIMAL(19, 2)
+              - column:
+                  name: tax_rate2
+                  type: DECIMAL(19, 2)
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+              - column:
+                  name: currency
+                  type: VARCHAR(10)
+              - column:
+                  name: payment_method
+                  type: VARCHAR(50)
+              - column:
+                  name: date
+                  type: TIMESTAMPTZ
+              - column:
+                  name: due_date
+                  type: TIMESTAMPTZ
+              - column:
+                  name: date_paid
+                  type: TIMESTAMPTZ
+              - column:
+                  name: date_refunded
+                  type: TIMESTAMPTZ
+              - column:
+                  name: date_cancelled
+                  type: TIMESTAMPTZ
+              - column:
+                  name: created_at
+                  type: TIMESTAMPTZ
+              - column:
+                  name: updated_at
+                  type: TIMESTAMPTZ
+              - column:
+                  name: items
+                  type: JSONB

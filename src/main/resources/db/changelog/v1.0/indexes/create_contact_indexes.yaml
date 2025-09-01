@@ -1,0 +1,50 @@
+databaseChangeLog:
+  - changeSet:
+      id: add_gin_trgm_for_contacts_address
+      author: iklakotsky
+      changes:
+        - sql:
+            sql: >
+              CREATE INDEX contacts_address_gin_trgm ON contacts 
+              USING GIN(address gin_trgm_ops);
+  - changeSet:
+      id: add_gin_trgm_for_contacts_full_name
+      author: iklakotsky
+      changes:
+        - sql:
+            sql: >
+              CREATE INDEX contacts_full_name_gin_trgm ON contacts 
+              USING GIN(full_name gin_trgm_ops);            
+
+  - changeSet:
+      id: add_gin_ts_vector_for_contacts_full_name
+      author: iklakotsky
+      changes:
+        - sql:
+            sql: |
+              CREATE INDEX contacts_full_name_gin_ts_vector_idx ON contacts 
+              USING GIN(to_tsvector('simple', full_name));
+  - changeSet:
+      id: add_gin_ts_vector_for_contacts_first_name
+      author: iklakotsky
+      changes:
+        - sql:
+            sql: |
+              CREATE INDEX contacts_first_name_gin_ts_vector_idx ON contacts 
+              USING GIN(to_tsvector('simple', first_name));
+  - changeSet:
+      id: add_gin_ts_vector_for_contacts_last_name
+      author: iklakotsky
+      changes:
+        - sql:
+            sql: |
+              CREATE INDEX contacts_last_name_gin_ts_vector_idx ON contacts 
+              USING GIN(to_tsvector('simple', last_name));
+  - changeSet:
+      id: add_gin_ts_vector_for_contacts_tax_id
+      author: iklakotsky
+      changes:
+        - sql:
+            sql: |
+              CREATE INDEX contacts_tax_id_gin_ts_vector_idx ON contacts 
+              USING GIN(to_tsvector('simple', tax_id));

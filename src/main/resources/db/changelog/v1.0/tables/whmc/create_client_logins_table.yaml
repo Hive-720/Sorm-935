@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_client_logins_table
+      author: iklakotsky
+      changes:
+        - createTable:
+            tableName: client_logins
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: client_id
+                  type: BIGINT
+              - column:
+                  name: ip_address
+                  type: VARCHAR(100)
+              - column:
+                  name: date
+                  type: TIMESTAMPTZ

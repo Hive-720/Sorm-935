@@ -22,8 +22,38 @@ services:
     ports:
       - "9931:9931"   # SORM Server (mTLS-enabled)
       - "9990:9990"   # Management (HTTP)
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILE}
     volumes:
       - sorm-logs:/app/logs
+    depends_on:
+      - postgres
+
+  postgres:
+    container_name: sorm-dev-postgres
+    image: postgres:17.6
+    ports:
+      - ${POSTGRES_PORT}:5432
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+    volumes:
+      - ./postgresql-docker-init.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres-data:/var/lib/postgresql/data
+
+  pg-admin:
+    container_name: sorm-dev-pg-admin
+    image: dpage/pgadmin4:9.7
+    ports:
+      - ${PGADMIN_PORT}:80
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      - postgres
 
   prometheus:
     image: prom/prometheus
@@ -41,7 +71,7 @@ services:
   loki:
     image: grafana/loki
     container_name: loki
-    command: ["-config.file=/etc/loki/local-config.yaml"]
+    command: [ "-config.file=/etc/loki/local-config.yaml" ]
     ports:
       - "3100:3100"
     volumes:
@@ -50,7 +80,7 @@ services:
   promtail:
     image: grafana/promtail
     container_name: promtail
-    command: ["-config.file=/etc/promtail/config.yml"]
+    command: [ "-config.file=/etc/promtail/config.yml" ]
     volumes:
       - ./promtail/config.yml:/etc/promtail/config.yml:ro
       - sorm-logs:/var/log/app:ro
@@ -76,3 +106,7 @@ services:
 volumes:
   loki-data:
   sorm-logs:
+  postgres-data:
+    driver: local
+  pgadmin-data:
+    driver: local

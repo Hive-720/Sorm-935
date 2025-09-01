@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_product_configs_table
+      author: iklakotsky
+      changes:
+        - createTable:
+            tableName: product_configs
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+              - column:
+                  name: type
+                  type: VARCHAR(50)

@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - changeSet:
+      id: add_gin_ts_vector_for_users_full_name
+      author: iklakotsky
+      changes:
+        - sql:
+            sql: |
+              CREATE INDEX users_full_name_gin_ts_vector_idx ON users 
+              USING GIN(to_tsvector('simple', full_name));
+  - changeSet:
+      id: add_gin_ts_vector_for_users_first_name
+      author: iklakotsky
+      changes:
+        - sql:
+            sql: |
+              CREATE INDEX users_first_name_gin_ts_vector_idx ON users 
+              USING GIN(to_tsvector('simple', first_name));
+  - changeSet:
+      id: add_gin_ts_vector_for_users_last_name
+      author: iklakotsky
+      changes:
+        - sql:
+            sql: |
+              CREATE INDEX users_last_name_gin_ts_vector_idx ON users 
+              USING GIN(to_tsvector('simple', last_name));

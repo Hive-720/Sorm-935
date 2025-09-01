@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_client_groups_table
+      author: iklakotsky
+      changes:
+        - createTable:
+            tableName: client_groups
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+              - column:
+                  name: discount_percent
+                  type: DECIMAL(19, 2)
+              - column:
+                  name: updated_at
+                  type: TIMESTAMPTZ
+              - column:
+                  name: deleted
+                  type: BOOL
+                  defaultValueBoolean: false

@@ -1,0 +1,44 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_order_items_table
+      author: your_name
+      changes:
+        - createTable:
+            tableName: order_items
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: order_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: rel_id
+                  type: bigint
+              - column:
+                  name: type
+                  type: VARCHAR(255)
+              - column:
+                  name: product_type
+                  type: VARCHAR(255)
+              - column:
+                  name: product_name
+                  type: VARCHAR(255)
+              - column:
+                  name: domain
+                  type: VARCHAR(255)
+              - column:
+                  name: billing_cycle
+                  type: DECIMAL(19,2)
+              - column:
+                  name: amount
+                  type: DECIMAL(19,2)
+              - column:
+                  name: status
+                  type: VARCHAR(100)

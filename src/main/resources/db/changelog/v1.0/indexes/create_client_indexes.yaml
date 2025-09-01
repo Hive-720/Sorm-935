@@ -1,0 +1,56 @@
+databaseChangeLog:
+  - changeSet:
+      id: install-pg-trgm
+      author: iklakotsky
+      changes:
+        - sql:
+            sql: "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
+  - changeSet:
+      id: add_gin_trgm_for_clients_address
+      author: iklakotsky
+      changes:
+        - sql:
+            sql: >
+              CREATE INDEX clients_address_gin_trgm ON clients 
+              USING GIN(address gin_trgm_ops);
+  - changeSet:
+      id: add_gin_trgm_for_clients_full_name
+      author: iklakotsky
+      changes:
+        - sql:
+            sql: >
+              CREATE INDEX clients_full_name_gin_trgm ON clients 
+              USING GIN(full_name gin_trgm_ops);      
+
+  - changeSet:
+      id: add_gin_ts_vector_for_client_full_name
+      author: iklakotsky
+      changes:
+        - sql:
+            sql: |
+              CREATE INDEX clients_full_name_gin_ts_vector_idx ON clients 
+              USING GIN(to_tsvector('simple', full_name));
+  - changeSet:
+      id: add_gin_ts_vector_for_client_first_name
+      author: iklakotsky
+      changes:
+        - sql:
+            sql: |
+              CREATE INDEX clients_first_name_gin_ts_vector_idx ON clients 
+              USING GIN(to_tsvector('simple', first_name));
+  - changeSet:
+      id: add_gin_ts_vector_for_client_last_name
+      author: iklakotsky
+      changes:
+        - sql:
+            sql: |
+              CREATE INDEX clients_last_name_gin_ts_vector_idx ON clients 
+              USING GIN(to_tsvector('simple', last_name));
+  - changeSet:
+      id: add_gin_ts_vector_for_client_tax_id
+      author: iklakotsky
+      changes:
+        - sql:
+            sql: |
+              CREATE INDEX clients_tax_id_gin_ts_vector_idx ON clients 
+              USING GIN(to_tsvector('simple', tax_id));

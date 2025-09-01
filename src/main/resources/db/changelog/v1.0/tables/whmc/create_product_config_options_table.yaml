@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_product_config_options-table
+      author: iklakotsky
+      changes:
+        - createTable:
+            tableName: product_config_options
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: product_config_id
+                  type: BIGINT
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+              - column:
+                  name: prices
+                  type: JSONB

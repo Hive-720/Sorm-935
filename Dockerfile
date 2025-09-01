@@ -8,7 +8,8 @@ COPY gradle gradle
 COPY gradlew settings.gradle build.gradle ./
 
 # Ensure gradlew is executable
-RUN chmod +x ./gradlew
+RUN sed -i 's/\r$//' gradlew && \
+    chmod +x ./gradlew
 
 # Prepare dependencies (this will cache Gradle dependencies)
 RUN ./gradlew --no-daemon dependencies > /dev/null 2>&1 || true
@@ -36,7 +37,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends curl \
 # Result: build/libs/sorm-server-935-1.0.0-SNAPSHOT.jar
 COPY --from=builder /workspace/build/libs/*.jar /app/app.jar
 
-# Non-root user for better security (UID chosen arbitrarily)
+# Non-root userDb for better security (UID chosen arbitrarily)
 RUN useradd -u 10001 -r -s /usr/sbin/nologin spring && mkdir ./logs && chown -R 10001:0 /app
 USER 10001
 
@@ -50,6 +51,6 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
 
 # If you want to override SSL or profiles at runtime, pass ENV/args like:
 #   docker run -e JAVA_OPTS="-Dspring.profiles.active=prod" ...
-# Note: SSL in this app requires client certificate (client-auth=need). Health checks without certs will fail.
+# Note: SSL in this app requires clientDb certificate (clientDb-auth=need). Health checks without certs will fail.
 
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /app/app.jar"]

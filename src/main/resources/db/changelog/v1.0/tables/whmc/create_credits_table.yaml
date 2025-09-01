@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_credits_table
+      author: iklakotsky
+      changes:
+        - createTable:
+            tableName: credits
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: client_id
+                  type: BIGINT
+              - column:
+                  name: rel_id
+                  type: BIGINT
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: amount
+                  type: DECIMAL(19, 2)
+              - column:
+                  name: date
+                  type: TIMESTAMPTZ

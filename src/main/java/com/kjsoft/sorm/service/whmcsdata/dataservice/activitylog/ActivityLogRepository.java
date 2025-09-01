@@ -1,0 +1,19 @@
+package com.kjsoft.sorm.service.whmcsdata.dataservice.activitylog;
+
+import com.kjsoft.sorm.service.whmcsdata.dataservice.activitylog.dto.ActivityLogSearchResult;
+import com.kjsoft.sorm.service.whmcsdata.filter.ActivityLogFilter;
+import com.kjsoft.sorm.service.whmcsdata.dataservice.activitylog.model.ActivityLog;
+import reactor.core.publisher.Mono;
+
+import java.time.OffsetDateTime;
+import java.util.List;
+
+
+public interface ActivityLogRepository {
+
+    Mono<OffsetDateTime> getLatestOffsetDateTime();
+
+    Mono<Boolean> addAll(List<ActivityLog> list);
+
+    Mono<ActivityLogSearchResult> findAllByFilter(ActivityLogFilter filter, String cursor, Integer offset, Integer limit);
+}

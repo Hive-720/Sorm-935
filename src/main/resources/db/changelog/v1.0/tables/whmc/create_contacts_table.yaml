@@ -1,0 +1,72 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_contacts_table
+      author: iklakotsky
+      changes:
+        - createTable:
+            tableName: contacts
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: client_id
+                  type: BIGINT
+              - column:
+                  name: full_name
+                  type: VARCHAR(255)
+              - column:
+                  name: first_name
+                  type: VARCHAR(255)
+              - column:
+                  name: last_name
+                  type: VARCHAR(255)
+              - column:
+                  name: company_name
+                  type: VARCHAR(255)
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+              - column:
+                  name: address
+                  type: VARCHAR(500)
+              - column:
+                  name: city
+                  type: VARCHAR(255)
+              - column:
+                  name: state
+                  type: VARCHAR(255)
+              - column:
+                  name: postcode
+                  type: VARCHAR(100)
+              - column:
+                  name: country
+                  type: VARCHAR(255)
+              - column:
+                  name: msisdn
+                  type: VARCHAR(100)
+              - column:
+                  name: tax_id
+                  type: VARCHAR(100)
+              - column:
+                  name: created_at
+                  type: TIMESTAMPTZ
+              - column:
+                  name: updated_at
+                  type: TIMESTAMPTZ
+              - column:
+                  name: deleted
+                  type: BOOL
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: add_full_text_search_to_contact
+      author: iklakotsky
+      changes:
+        - sql:
+            sql: |
+              CREATE INDEX contacts_name_fts_idx ON contacts 
+              USING GIN(to_tsvector('simple', full_name));

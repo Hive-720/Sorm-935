@@ -2,24 +2,10 @@ server:
   port: 9931
 
 spring:
-  autoconfigure:
-    exclude: 'org.springframework.boot.autoconfigure.r2dbc.R2dbcAutoConfiguration'
   application:
     name: sorm-935
-  data:
-    r2dbc:
-      repositories:
-        enabled: false
-  graphql:
-    path: /query
-    graphiql:
-      enabled: true
-    schema:
-      printer:
-        enabled: true
-    websocket:
-      connection-init-timeout: 10000s
-      keep-alive: 3000000s
+  profiles:
+    active: dev
 
 management:
   server:
@@ -37,3 +23,201 @@ management:
   endpoint:
     health:
       show-details: never
+
+sorm:
+  security:
+    enabled: false
+    api-key: testApiKey
+    exclude-endpoints:
+      - '/actuator/health'
+  system:
+    notifications:
+      errors_graphql_api: true
+      errors_api: true
+      errors_scheduler: true
+      graphql_schema_version_mismatch: true
+      reload: true
+  graphql:
+    schema:
+      version_check:
+        enabled: true
+    api:
+      max_page_size: 100 #100 по умолчанию
+      query:
+        analysis:
+          max_depth: 20
+          max_complexity: 200
+  rest:
+    api:
+      configs:
+        alert:
+          max_requests: 100
+        push:
+          max_requests: 100
+  whmcs:
+    credentials:
+      identifier: ''
+      secret: ''
+    client:
+      url: ''
+      connect_timeout: 60000
+      read_timeout: 60000
+      write_timeout: 60000
+      response_timeout: 60000
+    data_sync:
+      enabled: false # true по умолчанию
+      schedulers:
+        activity_log:
+          enabled: true #true по умолчанию
+          mode: 'NORMAL'  #NORMAL, FORCE_FIRST, ONLY_FIRST (NORMAL - по умолчанию)
+          cron_expression: ''
+          first_start:
+            delays: [ 100, 200, 500, 1000, 10000, 50000, 100000 ] # список попыток и миллисекунды ожидания
+            continue_after_error: true #true по умолчанию
+          limit: 100  #100 по умолчанию
+          skip_batch_error: false #по умолчанию false
+          forbidden_description_patterns:
+            - ''
+            - ''
+            - ''
+          max_age_years: 3 #3 по умолчанию
+
+        affiliate:
+          enabled: true #true по умолчанию
+          mode: 'NORMAL'  #NORMAL, FORCE_FIRST, ONLY_FIRST (NORMAL - по умолчанию)
+          cron_expression: ''
+          first_start:
+            delays: [ 100, 200, 500, 1000, 10000, 50000, 100000 ] # список миллисекунд, 100, 200, 500, 1000
+            continue_after_error: true #true по умолчанию
+          limit: 25  #25 по умолчанию
+          skip_batch_error: false #по умолчанию false
+
+        client_details:
+          enabled: true #true по умолчанию
+          mode: 'NORMAL'  #NORMAL, FORCE_FIRST, ONLY_FIRST (NORMAL - по умолчанию)
+          cron_expression: ''
+          first_start:
+            delays: [ 100, 200, 500, 1000, 10000, 50000, 100000 ] # список миллисекунд, 100, 200, 500, 1000
+            continue_after_error: true #true по умолчанию
+          client_limit: 100  #50 по умолчанию
+          skip_error_record: false #по умолчанию false
+          concurrency: 20 #по умолчанию 20
+
+        client_group:
+          enabled: true #true по умолчанию
+          mode: 'NORMAL'  #NORMAL, FORCE_FIRST, ONLY_FIRST (NORMAL - по умолчанию)
+          cron_expression: ''
+          first_start:
+            delays: [ 100, 200, 500, 1000, 10000, 50000, 100000 ] # список миллисекунд, 100, 200, 500, 1000
+            continue_after_error: true #true по умолчанию
+
+        client_product:
+          enabled: true #true по умолчанию
+          mode: 'NORMAL'  #NORMAL, FORCE_FIRST, ONLY_FIRST (NORMAL - по умолчанию)
+          cron_expression: ''
+          first_start:
+            delays: [ 100, 200, 500, 1000, 10000, 50000, 100000 ] # список миллисекунд, 100, 200, 500, 1000
+            continue_after_error: true #true по умолчанию
+          limit: 25  #25 по умолчанию
+          skip_batch_error: false #по умолчанию false
+
+        client:
+          enabled: true #true по умолчанию
+          mode: 'NORMAL'  #NORMAL, FORCE_FIRST, ONLY_FIRST (NORMAL - по умолчанию)
+          cron_expression: ''
+          first_start:
+            delays: [ 100, 200, 500, 1000, 10000, 50000, 100000 ] # список миллисекунд, 100, 200, 500, 1000
+            continue_after_error: true #true по умолчанию
+          limit: 25  #25 по умолчанию
+          skip_batch_error: false #по умолчанию false
+
+        contact:
+          enabled: true #true по умолчанию
+          mode: 'NORMAL'  #NORMAL, FORCE_FIRST, ONLY_FIRST (NORMAL - по умолчанию)
+          cron_expression: ''
+          first_start:
+            delays: [ 100, 200, 500, 1000, 10000, 50000, 100000 ] # список миллисекунд, 100, 200, 500, 1000
+            continue_after_error: true #true по умолчанию
+          limit: 25  #25 по умолчанию
+          skip_batch_error: false #по умолчанию false
+
+        contact_delete:
+          enabled: true #true по умолчанию
+          cron_expression: ''
+          limit: 25  #25 по умолчанию
+
+        credit:
+          enabled: true #true по умолчанию
+          mode: 'NORMAL'  #NORMAL, FORCE_FIRST, ONLY_FIRST (NORMAL - по умолчанию)
+          cron_expression: ''
+          first_start:
+            delays: [ 100, 200, 500, 1000, 10000, 50000, 100000 ] # список миллисекунд, 100, 200, 500, 1000
+            continue_after_error: true #true по умолчанию
+          client_limit: 25 #25 по умолчанию
+          skip_batch_error: false #по умолчанию false
+          max_age_years: 3 #3 по умолчанию
+          max_client_credit_per_task: 100
+
+        email:
+          enabled: true #true по умолчанию
+          mode: 'NORMAL'  #NORMAL, FORCE_FIRST, ONLY_FIRST (NORMAL - по умолчанию)
+          cron_expression: ''
+          first_start:
+            delays: [ 100, 200, 500, 1000, 10000, 50000, 100000 ] # список миллисекунд, 100, 200, 500, 1000
+            continue_after_error: true #true по умолчанию
+          client_limit: 15 #15 по умолчанию
+          limit: 25 #25 по умолчанию
+          skip_batch_error: false #по умолчанию false
+          max_age_years: 3 #3 по умолчанию
+          max_client_emails_per_task: 150 #150 по умолчанию.
+          mask_body_message_patterns:
+            - ''
+            - ''
+
+        invoice:
+          enabled: true #true по умолчанию
+          mode: 'NORMAL'  #NORMAL, FORCE_FIRST, ONLY_FIRST (NORMAL - по умолчанию)
+          cron_expression: ''
+          first_start:
+            delays: [ 100, 200, 500, 1000, 10000, 50000, 100000 ] # список миллисекунд, 100, 200, 500, 1000
+            continue_after_error: true #true по умолчанию
+          limit: 25  #25 по умолчанию
+          skip_batch_error: true #по умолчанию false
+          max_age_years: 3 #3 по умолчанию
+
+        order:
+          enabled: true #true по умолчанию
+          mode: 'NORMAL'  #NORMAL, FORCE_FIRST, ONLY_FIRST (NORMAL - по умолчанию)
+          cron_expression: ''
+          first_start:
+            delays: [ 100, 200, 500, 1000, 10000, 50000, 100000 ] # список миллисекунд, 100, 200, 500, 1000
+            continue_after_error: true #true по умолчанию
+          limit: 25  #25 по умолчанию
+          skip_batch_error: false #по умолчанию false
+          max_age_years: 3 #3 по умолчанию
+
+        payment_method:
+          enabled: true #true по умолчанию
+          mode: 'NORMAL'  #NORMAL, FORCE_FIRST, ONLY_FIRST (NORMAL - по умолчанию)
+          cron_expression: ''
+          first_start:
+            delays: [ 100, 200, 500, 1000, 10000, 50000, 100000 ] # список миллисекунд, 100, 200, 500, 1000
+            continue_after_error: true #true по умолчанию
+
+        product:
+          enabled: true #true по умолчанию
+          mode: 'NORMAL'  #NORMAL, FORCE_FIRST, ONLY_FIRST (NORMAL - по умолчанию)
+          cron_expression: ''
+          first_start:
+            delays: [ 100, 200, 500, 1000, 10000, 50000, 100000 ] # список миллисекунд, 100, 200, 500, 1000
+            continue_after_error: true #true по умолчанию
+
+        user:
+          enabled: true #true по умолчанию
+          mode: 'NORMAL'  #NORMAL, FORCE_FIRST, ONLY_FIRST (NORMAL - по умолчанию)
+          cron_expression: ''
+          first_start:
+            delays: [ 100, 200, 500, 1000, 10000, 50000, 100000 ] # список миллисекунд, 100, 200, 500, 1000
+            continue_after_error: true #true по умолчанию
+          limit: 25  #25 по умолчанию
+          skip_batch_error: false #по умолчанию false
