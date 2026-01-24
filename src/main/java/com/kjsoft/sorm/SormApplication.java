@@ -12,6 +12,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.context.annotation.Bean;
+import reactor.core.publisher.Hooks;
 import reactor.core.publisher.Mono;
 
 
@@ -26,6 +27,7 @@ public class SormApplication {
 
 
     public static void main(String[] args) {
+        Hooks.enableAutomaticContextPropagation();
         SpringApplication.run(SormApplication.class, args);
     }
 
