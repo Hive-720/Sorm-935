@@ -25,7 +25,7 @@ public final class QClient extends RelationalPathBase<ClientDb> implements QEnti
     private final StringPath lastName = createString("last_name");
     private final StringPath companyName = createString("company_name");
     private final StringPath email = createString("email");
-    private final StringPath address = createString("email");
+    private final StringPath address = createString("address");
     private final StringPath city = createString("city");
     private final StringPath state = createString("state");
     private final StringPath postcode = createString("postcode");

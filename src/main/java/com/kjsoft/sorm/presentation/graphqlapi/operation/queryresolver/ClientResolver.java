@@ -73,18 +73,18 @@ public class ClientResolver {
     }
 
     @SchemaMapping(typeName = "ClientProduct", field = "product")
-    public Mono<Product> getProductForClientProduct(Contact contact, DataLoader<Long, Product> dataLoader) {
-        return Mono.fromFuture(dataLoader.load(contact.clientId()));
+    public Mono<Product> getProductForClientProduct(ClientProduct clientProduct, DataLoader<Long, Product> dataLoader) {
+        return Mono.fromFuture(dataLoader.load(clientProduct.productId()));
     }
 
     @SchemaMapping(typeName = "ClientProduct", field = "order")
-    public Mono<Order> getOrderForClientProduct(Contact contact, DataLoader<Long, Order> dataLoader) {
-        return Mono.fromFuture(dataLoader.load(contact.clientId()));
+    public Mono<Order> getOrderForClientProduct(ClientProduct clientProduct, DataLoader<Long, Order> dataLoader) {
+        return Mono.fromFuture(dataLoader.load(clientProduct.orderId()));
     }
 
     @SchemaMapping(typeName = "ClientProduct", field = "client")
-    public Mono<Client> getClientForClientProduct(Contact contact, DataLoader<Long, Client> dataLoader) {
-        return Mono.fromFuture(dataLoader.load(contact.clientId()));
+    public Mono<Client> getClientForClientProduct(ClientProduct clientProduct, DataLoader<Long, Client> dataLoader) {
+        return Mono.fromFuture(dataLoader.load(clientProduct.clientId()));
     }
 
     @SchemaMapping(typeName = "Client", field = "userOwner")

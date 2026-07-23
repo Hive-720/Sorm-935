@@ -52,13 +52,13 @@ public class NotificationsController {
     @ResponseStatus(OK)
     public Mono<Void> pushAlert(@Valid @RequestBody MetricAlertsRequest body) {
         var apiConfig = restApiConfig.getApiConfig(RestApiConfig.Api.ALERT);
-        if (activeRequests.get() >= apiConfig.getMaxRequests()) {
+        if (activeAlertRequests.get() >= apiConfig.getMaxRequests()) {
             return Mono.error(new TooManyRequestsException("Too many concurrent requests"));
         }
 
         activeAlertRequests.incrementAndGet();
         var metricAlerts = metricsAlertMapper.map(body);
         return systemNotificationService.pushMetricAlerts(metricAlerts)
-                .doFinally(signal -> activeRequests.decrementAndGet());
+                .doFinally(signal -> activeAlertRequests.decrementAndGet());
     }
 }

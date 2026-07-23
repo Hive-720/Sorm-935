@@ -166,7 +166,7 @@ public class ClientRepositoryImpl implements ClientRepository {
     public Mono<Boolean> updateAllClientGroup(List<ClientGroup> clientGroups) {
         return databaseClient.inConnection(connection -> {
             var statement = connection.createStatement("""
-                    UPDATE affiliates
+                    UPDATE client_groups
                     SET name = $1,
                         discount_percent = $2,
                         updated_at = $3,
@@ -369,7 +369,7 @@ public class ClientRepositoryImpl implements ClientRepository {
                         credit = $22,
                         tax_exempt = $23,
                         language = $24,
-                        deleted = $25,
+                        deleted = $25
                     WHERE id = $26
                     """);
 

@@ -32,7 +32,7 @@ public class ClientGroup {
             changed = true;
         }
 
-        if (isBigDecimalEqual(discountPercent, actual.discountPercent)) {
+        if (!isBigDecimalEqual(discountPercent, actual.discountPercent)) {
             this.discountPercent = actual.discountPercent;
             changed = true;
         }
