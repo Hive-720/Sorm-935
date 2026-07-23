@@ -7,6 +7,7 @@ import com.kjsoft.sorm.presentation.api.request.MetricAlertsRequest;
 import com.kjsoft.sorm.presentation.api.request.NotificationRequest;
 import com.kjsoft.sorm.presentation.api.request.mapper.MetricAlertsPresentationMapper;
 import com.kjsoft.sorm.presentation.api.request.mapper.SystemNotificationPresentationMapper;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 import jakarta.validation.Valid;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.Semaphore;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -27,38 +28,37 @@ public class NotificationsController {
     private final SystemNotificationPresentationMapper notifyMapper;
     private final MetricAlertsPresentationMapper metricsAlertMapper;
     private final RestApiConfig restApiConfig;
-    //TODO: рассмотреть другие алгоритмы
-    private final AtomicInteger activeRequests = new AtomicInteger(0);
-    private final AtomicInteger activeAlertRequests = new AtomicInteger(0);
+
+    private Semaphore pushSemaphore;
+    private Semaphore alertSemaphore;
+
+    @PostConstruct
+    void initSemaphores() {
+        pushSemaphore = new Semaphore(restApiConfig.getApiConfig(RestApiConfig.Api.PUSH).getMaxRequests());
+        alertSemaphore = new Semaphore(restApiConfig.getApiConfig(RestApiConfig.Api.ALERT).getMaxRequests());
+    }
 
 
     @PutMapping("/notifications/push")
     @ResponseStatus(OK)
     public Mono<Void> pushNotifications(@Valid @RequestBody NotificationRequest body) {
-        return Mono.defer(() -> {
-                    var apiConfig = restApiConfig.getApiConfig(RestApiConfig.Api.PUSH);
-                    if (activeRequests.get() >= apiConfig.getMaxRequests()) {
-                        return Mono.error(new TooManyRequestsException("Too many concurrent requests"));
-                    }
-                    activeRequests.incrementAndGet();
-                    return Mono.just(body);
-                })
+        return Mono.fromCallable(pushSemaphore::tryAcquire)
+                .filter(acquired -> acquired)
+                .switchIfEmpty(Mono.error(new TooManyRequestsException("Too many concurrent requests")))
+                .then(Mono.just(body))
                 .map(notifyMapper::map)
                 .flatMap(systemNotificationService::push)
-                .doFinally(signal -> activeRequests.decrementAndGet());
+                .doFinally(signal -> pushSemaphore.release());
     }
 
     @PutMapping("/notifications/metric/alerts/push")
     @ResponseStatus(OK)
     public Mono<Void> pushAlert(@Valid @RequestBody MetricAlertsRequest body) {
-        var apiConfig = restApiConfig.getApiConfig(RestApiConfig.Api.ALERT);
-        if (activeAlertRequests.get() >= apiConfig.getMaxRequests()) {
-            return Mono.error(new TooManyRequestsException("Too many concurrent requests"));
-        }
-
-        activeAlertRequests.incrementAndGet();
-        var metricAlerts = metricsAlertMapper.map(body);
-        return systemNotificationService.pushMetricAlerts(metricAlerts)
-                .doFinally(signal -> activeAlertRequests.decrementAndGet());
+        return Mono.fromCallable(alertSemaphore::tryAcquire)
+                .filter(acquired -> acquired)
+                .switchIfEmpty(Mono.error(new TooManyRequestsException("Too many concurrent requests")))
+                .then(Mono.fromCallable(() -> metricsAlertMapper.map(body)))
+                .flatMap(systemNotificationService::pushMetricAlerts)
+                .doFinally(signal -> alertSemaphore.release());
     }
 }
