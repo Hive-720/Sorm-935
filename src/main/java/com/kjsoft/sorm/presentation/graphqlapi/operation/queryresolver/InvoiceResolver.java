@@ -1,7 +1,7 @@
 package com.kjsoft.sorm.presentation.graphqlapi.operation.queryresolver;
 
 import com.kjsoft.sorm.service.whmcsdata.dataservice.invoice.InvoiceService;
-import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.InvoiceFilterInput;
+import com.kjsoft.sorm.graphql.generated.model.InvoiceFilterInputGql;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.mapper.InvoiceFilterPresentationMapper;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.type.result.InvoiceResult;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.type.result.mapper.InvoiceResultMapper;
@@ -24,7 +24,7 @@ public class InvoiceResolver {
 
 
     @SchemaMapping(typeName = "QueryMessage")
-    public Mono<InvoiceResult> invoices(@Argument InvoiceFilterInput filter, @Argument Integer offset,
+    public Mono<InvoiceResult> invoices(@Argument InvoiceFilterInputGql filter, @Argument Integer offset,
                                         @Argument Integer limit, @Argument String cursor) {
         var searchFilter = invoiceFilterMapper.map(filter);
         return invoiceService.search(searchFilter, cursor, offset, limit)

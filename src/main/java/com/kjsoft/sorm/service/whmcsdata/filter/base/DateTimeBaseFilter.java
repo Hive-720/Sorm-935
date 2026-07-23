@@ -13,5 +13,5 @@ public class DateTimeBaseFilter {
     private DateTimeCondition utc;
     private List<DateTimeBaseFilter> and;
     private List<DateTimeBaseFilter> or;
-    private DateTimeBaseFilter not;
+    private List<DateTimeBaseFilter> not;
 }

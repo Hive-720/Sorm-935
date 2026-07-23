@@ -1,7 +1,7 @@
 package com.kjsoft.sorm.presentation.graphqlapi.operation.queryresolver;
 
 import com.kjsoft.sorm.service.whmcsdata.dataservice.email.EmailService;
-import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.*;
+import com.kjsoft.sorm.graphql.generated.model.EmailFilterInputGql;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.mapper.*;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.type.Client;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.type.Email;
@@ -24,7 +24,7 @@ public class EmailResolver {
 
 
     @SchemaMapping(typeName = "QueryMessage")
-    public Mono<EmailResult> emails(@Argument EmailFilterInput filter, @Argument Integer offset,
+    public Mono<EmailResult> emails(@Argument EmailFilterInputGql filter, @Argument Integer offset,
                                     @Argument Integer limit, @Argument String cursor) {
         var searchFilter = emailFilterMapper.map(filter);
         return emailService.search(searchFilter, cursor, offset, limit)

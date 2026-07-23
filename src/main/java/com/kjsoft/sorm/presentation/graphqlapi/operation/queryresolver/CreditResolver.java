@@ -1,7 +1,7 @@
 package com.kjsoft.sorm.presentation.graphqlapi.operation.queryresolver;
 
 import com.kjsoft.sorm.service.whmcsdata.dataservice.credit.CreditService;
-import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.CreditFilterInput;
+import com.kjsoft.sorm.graphql.generated.model.CreditFilterInputGql;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.mapper.CreditFilterPresentationMapper;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.type.result.CreditResult;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.type.result.mapper.CreditResultMapper;
@@ -24,7 +24,7 @@ public class CreditResolver {
 
 
     @SchemaMapping(typeName = "QueryMessage")
-    public Mono<CreditResult> credits(@Argument CreditFilterInput filter, @Argument Integer offset,
+    public Mono<CreditResult> credits(@Argument CreditFilterInputGql filter, @Argument Integer offset,
                                       @Argument Integer limit, @Argument String cursor) {
         var searchFilter = creditFilterMapper.map(filter);
         return creditService.search(searchFilter, cursor, offset, limit)

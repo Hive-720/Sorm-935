@@ -3,7 +3,7 @@ package com.kjsoft.sorm.presentation.graphqlapi.operation.queryresolver;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.type.Client;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.type.User;
 import com.kjsoft.sorm.service.whmcsdata.dataservice.user.UserService;
-import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.UserFilterInput;
+import com.kjsoft.sorm.graphql.generated.model.UserFilterInputGql;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.mapper.UserFilterPresentationMapper;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.type.result.UserResult;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.type.result.mapper.UserResultMapper;
@@ -26,7 +26,7 @@ public class UserResolver {
 
 
     @SchemaMapping(typeName = "QueryMessage")
-    public Mono<UserResult> users(@Argument UserFilterInput filter, @Argument Integer offset, @Argument Integer limit,
+    public Mono<UserResult> users(@Argument UserFilterInputGql filter, @Argument Integer offset, @Argument Integer limit,
                                   @Argument String cursor) {
         var searchFilter = userFilterMapper.map(filter);
         return userService.search(searchFilter, cursor, offset, limit)

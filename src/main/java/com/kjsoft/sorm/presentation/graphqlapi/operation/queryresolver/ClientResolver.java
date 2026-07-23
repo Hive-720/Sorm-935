@@ -1,13 +1,13 @@
 package com.kjsoft.sorm.presentation.graphqlapi.operation.queryresolver;
 
-import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.ClientLoginFilterInput;
+import com.kjsoft.sorm.graphql.generated.model.ClientLoginFilterInputGql;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.mapper.ClientLoginFilterPresentationMapper;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.type.result.ClientLoginResult;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.type.result.mapper.ClientLoginResultMapper;
 import com.kjsoft.sorm.service.whmcsdata.dataservice.client.ClientService;
-import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.ClientFilterInput;
-import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.ClientGroupFilterInput;
-import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.ClientProductFilterInput;
+import com.kjsoft.sorm.graphql.generated.model.ClientFilterInputGql;
+import com.kjsoft.sorm.graphql.generated.model.ClientGroupFilterInputGql;
+import com.kjsoft.sorm.graphql.generated.model.ClientProductFilterInputGql;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.mapper.ClientFilterPresentationMapper;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.mapper.ClientGroupFilterPresentationMapper;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.mapper.ClientProductFilterPresentationMapper;
@@ -41,7 +41,7 @@ public class ClientResolver {
 
 
     @SchemaMapping(typeName = "QueryMessage")
-    public Mono<ClientResult> clients(@Argument ClientFilterInput filter, @Argument Integer offset,
+    public Mono<ClientResult> clients(@Argument ClientFilterInputGql filter, @Argument Integer offset,
                                       @Argument Integer limit, @Argument String cursor) {
         var searchFilter = clientFilterMapper.map(filter);
         return clientService.searchClients(searchFilter, cursor, offset, limit)
@@ -49,7 +49,7 @@ public class ClientResolver {
     }
 
     @SchemaMapping(typeName = "QueryMessage")
-    public Mono<ClientProductResult> clientProducts(@Argument ClientProductFilterInput filter, @Argument Integer offset,
+    public Mono<ClientProductResult> clientProducts(@Argument ClientProductFilterInputGql filter, @Argument Integer offset,
                                                     @Argument Integer limit, @Argument String cursor) {
         var searchFilter = clientProductFilterMapper.map(filter);
         return clientService.searchClientProducts(searchFilter, cursor, offset, limit)
@@ -57,7 +57,7 @@ public class ClientResolver {
     }
 
     @SchemaMapping(typeName = "QueryMessage")
-    public Mono<ClientGroupResult> clientGroups(@Argument ClientGroupFilterInput filter, @Argument Integer offset,
+    public Mono<ClientGroupResult> clientGroups(@Argument ClientGroupFilterInputGql filter, @Argument Integer offset,
                                                 @Argument Integer limit, @Argument String cursor) {
         var searchFilter = clientGroupFilterMapper.map(filter);
         return clientService.searchClientGroups(searchFilter, cursor, offset, limit)
@@ -65,7 +65,7 @@ public class ClientResolver {
     }
 
     @SchemaMapping(typeName = "QueryMessage")
-    public Mono<ClientLoginResult> clientLogins(@Argument ClientLoginFilterInput filter, @Argument Integer offset,
+    public Mono<ClientLoginResult> clientLogins(@Argument ClientLoginFilterInputGql filter, @Argument Integer offset,
                                                 @Argument Integer limit, @Argument String cursor) {
         var searchFilter = clientLoginFilterMapper.map(filter);
         return clientService.searchClientLogins(searchFilter, cursor, offset, limit)

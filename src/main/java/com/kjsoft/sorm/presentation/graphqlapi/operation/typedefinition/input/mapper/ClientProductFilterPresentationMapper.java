@@ -1,7 +1,7 @@
 package com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.mapper;
 
 import com.kjsoft.sorm.service.whmcsdata.filter.ClientProductFilter;
-import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.ClientProductFilterInput;
+import com.kjsoft.sorm.graphql.generated.model.ClientProductFilterInputGql;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.base.mapper.DateTimeBaseFilterPresentationMapper;
 import org.mapstruct.Mapper;
 
@@ -15,5 +15,5 @@ import org.mapstruct.Mapper;
         })
 public interface ClientProductFilterPresentationMapper {
 
-    ClientProductFilter map(ClientProductFilterInput input);
+    ClientProductFilter map(ClientProductFilterInputGql input);
 }

@@ -1,7 +1,7 @@
 package com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.mapper;
 
 import com.kjsoft.sorm.service.whmcsdata.filter.ContactFilter;
-import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.ContactFilterInput;
+import com.kjsoft.sorm.graphql.generated.model.ContactFilterInputGql;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.base.mapper.AddressBaseFilterPresentationMapper;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.base.mapper.DateTimeBaseFilterPresentationMapper;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.base.mapper.InnBaseFilterPresentationMapper;
@@ -18,5 +18,5 @@ import org.mapstruct.Mapper;
 })
 public interface ContactFilterPresentationMapper {
 
-    ContactFilter map(ContactFilterInput input);
+    ContactFilter map(ContactFilterInputGql input);
 }

@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.5.5'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'io.github.kobylynskyi.graphql.codegen' version '5.9.0'
 }
 
 group = 'com.kjsoft'
@@ -37,6 +38,83 @@ configurations {
     integrationTestImplementation.extendsFrom testImplementation
     integrationTestRuntimeOnly.extendsFrom testRuntimeOnly
 }
+
+graphqlCodegen {
+    graphqlSchemaPaths = [
+        "$projectDir/src/main/resources/graphql/schema.graphqls".toString()
+    ]
+    outputDir = new File("$buildDir/generated/graphql")
+    packageName = "com.kjsoft.sorm.graphql.generated"
+    modelPackageName = "com.kjsoft.sorm.graphql.generated.model"
+
+    generateImmutableModels = true
+    generateEqualsAndHashCode = true
+    generateToString = true
+
+    // Сгенерированные выходные типы получат суффикс Gql,
+    // чтобы не конфликтовать с ручными типами сущностей
+    modelNameSuffix = "Gql"
+
+    // Кастомные маппинги скаляров
+    customTypesMapping = [
+        "ID"     : "java.lang.Long",
+        "Int"    : "java.lang.Integer",
+        "Float"  : "java.math.BigDecimal",
+        "String" : "java.lang.String",
+        "Boolean": "java.lang.Boolean"
+    ]
+
+    // Маппинг кастомных директив валидации на Jakarta annotations.
+    // Шаблонные переменные {{param}} не поддерживаются в версии плагина 5.9.0,
+    // поэтому используются фиксированные значения по умолчанию.
+    // Валидация в рантайме не применяется — аннотации носят информационный характер.
+    directiveAnnotationsMapping = [
+        "Size"           : ["@jakarta.validation.constraints.Size(min = 0, max = 2147483647)"],
+        "Pattern"        : ["@jakarta.validation.constraints.Pattern(regexp = \".*\")"],
+        "PositiveOrZero" : ["@jakarta.validation.constraints.PositiveOrZero"],
+        "Range"          : ["@jakarta.validation.constraints.Min(0)", "@jakarta.validation.constraints.Max(2147483647)"],
+        "ContainerSize"  : ["@jakarta.validation.constraints.Size(min = 0, max = 2147483647)"]
+    ]
+
+    // Генерировать интерфейсы резолверов с аннотациями Spring GraphQL
+    resolverArgumentAnnotations = [
+        "org.springframework.graphql.data.method.annotation.Argument"
+    ]
+    parametrizedResolverAnnotations = [
+        "org.springframework.graphql.data.method.annotation.SchemaMapping"
+    ]
+}
+
+// Подключаем сгенерированные исходники к компиляции (только model-классы, не resolver-ы)
+sourceSets.main.java.srcDir "$buildDir/generated/graphql"
+sourceSets.main.java {
+    exclude 'com/kjsoft/sorm/graphql/generated/*Resolver.java'
+}
+
+// Пост-обработка: замена javax на jakarta в сгенерированном коде
+tasks.register('fixGeneratedCode') {
+    description = 'Replaces javax with jakarta in generated code'
+    group = 'codegen'
+    inputs.dir "$buildDir/generated/graphql"
+    outputs.dir "$buildDir/generated/graphql"
+    doLast {
+        def generatedDir = file("$buildDir/generated/graphql")
+        generatedDir.eachFileRecurse { file ->
+            if (file.name.endsWith('.java')) {
+                def content = file.text
+                def updated = content
+                    .replace('javax.validation.constraints', 'jakarta.validation.constraints')
+                    .replace('javax.annotation.processing.Generated', 'jakarta.annotation.Generated')
+                if (content != updated) {
+                    file.text = updated
+                }
+            }
+        }
+    }
+}
+
+fixGeneratedCode.dependsOn 'graphqlCodegen'
+compileJava.dependsOn 'fixGeneratedCode'
 
 repositories {
     mavenCentral()

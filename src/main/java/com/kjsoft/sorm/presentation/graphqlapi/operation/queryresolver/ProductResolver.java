@@ -1,7 +1,7 @@
 package com.kjsoft.sorm.presentation.graphqlapi.operation.queryresolver;
 
 import com.kjsoft.sorm.service.whmcsdata.dataservice.product.ProductService;
-import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.ProductFilterInput;
+import com.kjsoft.sorm.graphql.generated.model.ProductFilterInputGql;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.mapper.ProductFilterPresentationMapper;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.type.Product;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.type.ProductConfig;
@@ -27,7 +27,7 @@ public class ProductResolver {
 
 
     @SchemaMapping(typeName = "QueryMessage")
-    public Mono<ProductResult> products(@Argument ProductFilterInput filter, @Argument Integer offset,
+    public Mono<ProductResult> products(@Argument ProductFilterInputGql filter, @Argument Integer offset,
                                         @Argument Integer limit, @Argument String cursor) {
         var searchFilter = productFilterMapper.map(filter);
         return productService.search(searchFilter, cursor, offset, limit)

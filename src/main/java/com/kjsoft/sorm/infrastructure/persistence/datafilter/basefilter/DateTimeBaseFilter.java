@@ -18,7 +18,7 @@ public class DateTimeBaseFilter {
 
     private List<DateTimeBaseFilter> and;
     private List<DateTimeBaseFilter> or;
-    private DateTimeBaseFilter not;
+    private List<DateTimeBaseFilter> not;
 
 
     public BooleanExpression toPredicate(DateTimePath<OffsetDateTime> column) {
@@ -51,10 +51,14 @@ public class DateTimeBaseFilter {
             }
         }
 
-        if (not != null) {
-            var notPredicate = not.toPredicate(column);
-            if (notPredicate != null) {
-                conditions.add(notPredicate.not());
+        if (not != null && !not.isEmpty()) {
+            var notPredicates = not.stream()
+                    .map(filter -> filter.toPredicate(column))
+                    .filter(Objects::nonNull)
+                    .toArray(BooleanExpression[]::new);
+
+            if (notPredicates.length > 0) {
+                conditions.add(Expressions.anyOf(notPredicates).not());
             }
         }
 

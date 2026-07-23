@@ -1,7 +1,7 @@
 package com.kjsoft.sorm.presentation.graphqlapi.operation.queryresolver;
 
 import com.kjsoft.sorm.service.whmcsdata.dataservice.affiliate.AffiliateService;
-import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.AffiliateFilterInput;
+import com.kjsoft.sorm.graphql.generated.model.AffiliateFilterInputGql;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.mapper.AffiliateFilterPresentationMapper;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.type.result.AffiliateResult;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.type.result.mapper.AffiliateResultMapper;
@@ -24,7 +24,7 @@ public class AffiliateResolver {
 
 
     @SchemaMapping(typeName = "QueryMessage")
-    public Mono<AffiliateResult> affiliates(@Argument AffiliateFilterInput filter, @Argument Integer offset,
+    public Mono<AffiliateResult> affiliates(@Argument AffiliateFilterInputGql filter, @Argument Integer offset,
                                             @Argument Integer limit, @Argument String cursor) {
         var searchFilter = affiliateFilterMapper.map(filter);
         return affiliateService.search(searchFilter, cursor, offset, limit)

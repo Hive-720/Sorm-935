@@ -2,7 +2,7 @@ package com.kjsoft.sorm.infrastructure.persistence.datafilter.basefilter;
 
 import com.kjsoft.sorm.infrastructure.persistence.datafilter.basefilter.condition.StringRegExpExactCondition;
 import com.kjsoft.sorm.infrastructure.persistence.datafilter.operation.ArrayOperations;
-import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.type.base.IpType;
+import com.kjsoft.sorm.graphql.generated.model.IpTypeGql;
 import com.querydsl.core.types.dsl.ArrayPath;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -17,7 +17,7 @@ import java.util.Objects;
 @AllArgsConstructor
 public class IpAddressBaseFilter {
     private StringRegExpExactCondition ip;
-    private IpType type;
+    private IpTypeGql type;
 
     protected List<IpAddressBaseFilter> and;
     protected List<IpAddressBaseFilter> or;
@@ -34,7 +34,7 @@ public class IpAddressBaseFilter {
         }
 
         if (type != null) {
-            if (type == IpType.IPV4) {
+            if (type == IpTypeGql.IPV4) {
                 conditions.add(ArrayOperations.anyNotLike(arrayColumn, IPV6_SIMPLE_LIKE_PATTERN));
             } else {
                 conditions.add(ArrayOperations.anyLike(arrayColumn, IPV6_SIMPLE_LIKE_PATTERN));
@@ -84,7 +84,7 @@ public class IpAddressBaseFilter {
         }
 
         if (type != null) {
-            if (type == IpType.IPV4) {
+            if (type == IpTypeGql.IPV4) {
                 conditions.add(stringColumn.notLike(IPV6_SIMPLE_LIKE_PATTERN));
             } else {
                 conditions.add(stringColumn.like(IPV6_SIMPLE_LIKE_PATTERN));

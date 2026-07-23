@@ -1,4 +1,6 @@
 package com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.type.base;
 
-public record IpAddressBase(String ip, IpType type) {
+import com.kjsoft.sorm.graphql.generated.model.IpTypeGql;
+
+public record IpAddressBase(String ip, IpTypeGql type) {
 }

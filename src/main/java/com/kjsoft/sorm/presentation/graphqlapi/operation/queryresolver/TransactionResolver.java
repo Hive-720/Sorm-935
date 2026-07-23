@@ -1,7 +1,7 @@
 package com.kjsoft.sorm.presentation.graphqlapi.operation.queryresolver;
 
 import com.kjsoft.sorm.service.whmcsdata.dataservice.transaction.TransactionService;
-import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.TransactionFilterInput;
+import com.kjsoft.sorm.graphql.generated.model.TransactionFilterInputGql;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.mapper.TransactionFilterPresentationMapper;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.type.result.TransactionResult;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.type.result.mapper.TransactionResultMapper;
@@ -25,7 +25,7 @@ public class TransactionResolver {
 
 
     @SchemaMapping(typeName = "QueryMessage")
-    public Mono<TransactionResult> transactions(@Argument TransactionFilterInput filter, @Argument Integer offset,
+    public Mono<TransactionResult> transactions(@Argument TransactionFilterInputGql filter, @Argument Integer offset,
                                                 @Argument Integer limit, @Argument String cursor) {
         var searchFilter = transactionFilterMapper.map(filter);
         return transactionService.search(searchFilter, cursor, offset, limit)

@@ -1,6 +1,7 @@
 package com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.base.mapper;
 
 import com.kjsoft.sorm.service.whmcsdata.filter.base.AddressBaseFilter;
+import com.kjsoft.sorm.graphql.generated.model.AddressBaseFilterGql;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.base.condition.mapper.StringRegExpFullTextFilterPresentationMapper;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.base.condition.mapper.StringTermExactFilterPresentationMapper;
 import org.mapstruct.Mapper;
@@ -12,5 +13,5 @@ import org.mapstruct.Mapper;
 })
 public interface AddressBaseFilterPresentationMapper {
 
-    AddressBaseFilter map(com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.base.AddressBaseFilter filter);
+    AddressBaseFilter map(AddressBaseFilterGql filter);
 }

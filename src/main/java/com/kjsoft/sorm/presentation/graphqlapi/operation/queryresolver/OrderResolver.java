@@ -1,7 +1,7 @@
 package com.kjsoft.sorm.presentation.graphqlapi.operation.queryresolver;
 
 import com.kjsoft.sorm.service.whmcsdata.dataservice.order.OrderService;
-import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.OrderFilterInput;
+import com.kjsoft.sorm.graphql.generated.model.OrderFilterInputGql;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.mapper.OrderFilterPresentationMapper;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.type.result.OrderResult;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.type.result.mapper.OrderResultMapper;
@@ -25,7 +25,7 @@ public class OrderResolver {
 
 
     @SchemaMapping(typeName = "QueryMessage")
-    public Mono<OrderResult> orders(@Argument OrderFilterInput filter, @Argument Integer offset,
+    public Mono<OrderResult> orders(@Argument OrderFilterInputGql filter, @Argument Integer offset,
                                     @Argument Integer limit, @Argument String cursor) {
         var searchFilter = orderFilterMapper.map(filter);
         return orderService.searchOrders(searchFilter, cursor, offset, limit)

@@ -1,7 +1,7 @@
 package com.kjsoft.sorm.presentation.graphqlapi.operation.queryresolver;
 
 import com.kjsoft.sorm.service.whmcsdata.dataservice.paymentmethod.PaymentMethodService;
-import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.PaymentMethodFilterInput;
+import com.kjsoft.sorm.graphql.generated.model.PaymentMethodFilterInputGql;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.mapper.PaymentMethodFilterPresentationMapper;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.type.result.PaymentMethodResult;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.type.result.mapper.PaymentMethodResultMapper;
@@ -21,7 +21,7 @@ public class PaymentMethodResolver {
 
 
     @SchemaMapping(typeName = "QueryMessage")
-    public Mono<PaymentMethodResult> paymentMethods(@Argument PaymentMethodFilterInput filter, @Argument Integer offset,
+    public Mono<PaymentMethodResult> paymentMethods(@Argument PaymentMethodFilterInputGql filter, @Argument Integer offset,
                                             @Argument Integer limit, @Argument String cursor) {
         var searchFilter = paymentMethodFilterMapper.map(filter);
         return paymentMethodService.search(searchFilter, cursor, offset, limit)

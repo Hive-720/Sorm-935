@@ -1,7 +1,7 @@
 package com.kjsoft.sorm.presentation.graphqlapi.operation.queryresolver;
 
 import com.kjsoft.sorm.service.whmcsdata.dataservice.activitylog.ActivityLogService;
-import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.ActivityLogFilterInput;
+import com.kjsoft.sorm.graphql.generated.model.ActivityLogFilterInputGql;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.mapper.ActivityLogFilterPresentationMapper;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.type.User;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.type.result.ActivityLogResult;
@@ -25,7 +25,7 @@ public class ActivityLogResolver {
 
 
     @SchemaMapping(typeName = "QueryMessage")
-    public Mono<ActivityLogResult> activityLog(@Argument ActivityLogFilterInput filter, @Argument Integer offset,
+    public Mono<ActivityLogResult> activityLog(@Argument ActivityLogFilterInputGql filter, @Argument Integer offset,
                                                @Argument Integer limit, @Argument String cursor) {
         var searchFilter = activityLogFilterMapper.map(filter);
         return activityLogService.search(searchFilter, cursor, offset, limit)

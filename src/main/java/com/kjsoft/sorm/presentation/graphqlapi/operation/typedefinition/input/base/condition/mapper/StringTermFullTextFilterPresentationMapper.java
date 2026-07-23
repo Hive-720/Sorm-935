@@ -1,7 +1,7 @@
 package com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.base.condition.mapper;
 
 import com.kjsoft.sorm.service.whmcsdata.filter.condition.StringTermFullTextCondition;
-import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.base.condition.StringTermFullTextFilter;
+import com.kjsoft.sorm.graphql.generated.model.StringTermFullTextFilterGql;
 import com.kjsoft.sorm.presentation.graphqlapi.util.MapperListConverter;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -14,5 +14,5 @@ public interface StringTermFullTextFilterPresentationMapper extends MapperListCo
     @Mapping(source = "anyoftext", target = "anyOfText")
     @Mapping(source = "allofterms", target = "allOfTerms", qualifiedByName = "commaSeparatedToList")
     @Mapping(source = "anyofterms", target = "anyOfTerms", qualifiedByName = "commaSeparatedToList")
-    StringTermFullTextCondition map(StringTermFullTextFilter filter);
+    StringTermFullTextCondition map(StringTermFullTextFilterGql filter);
 }

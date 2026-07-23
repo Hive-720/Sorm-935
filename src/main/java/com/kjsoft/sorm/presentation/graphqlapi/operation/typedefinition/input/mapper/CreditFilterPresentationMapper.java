@@ -1,7 +1,7 @@
 package com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.mapper;
 
 import com.kjsoft.sorm.service.whmcsdata.filter.CreditFilter;
-import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.CreditFilterInput;
+import com.kjsoft.sorm.graphql.generated.model.CreditFilterInputGql;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.base.mapper.DateTimeBaseFilterPresentationMapper;
 import org.mapstruct.Mapper;
 
@@ -12,5 +12,5 @@ import org.mapstruct.Mapper;
 })
 public interface CreditFilterPresentationMapper {
 
-    CreditFilter map(CreditFilterInput input);
+    CreditFilter map(CreditFilterInputGql input);
 }

@@ -1,7 +1,7 @@
 package com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.mapper;
 
 import com.kjsoft.sorm.service.whmcsdata.filter.ActivityLogFilter;
-import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.ActivityLogFilterInput;
+import com.kjsoft.sorm.graphql.generated.model.ActivityLogFilterInputGql;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.base.mapper.DateTimeBaseFilterPresentationMapper;
 import org.mapstruct.Mapper;
 
@@ -13,5 +13,5 @@ import org.mapstruct.Mapper;
 })
 public interface ActivityLogFilterPresentationMapper {
 
-    ActivityLogFilter map(ActivityLogFilterInput input);
+    ActivityLogFilter map(ActivityLogFilterInputGql input);
 }

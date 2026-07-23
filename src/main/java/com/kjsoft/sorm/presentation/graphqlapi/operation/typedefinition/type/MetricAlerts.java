@@ -1,13 +1,13 @@
 package com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.type;
 
-import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.type.enums.AlertStatus;
+import com.kjsoft.sorm.graphql.generated.model.AlertStatusGql;
 
 import java.util.List;
 
 
 public record MetricAlerts(
         String groupKey,
-        AlertStatus status,
+        AlertStatusGql status,
         String receiver,
         List<KeyValueRef> groupLabels,
         List<KeyValueRef> commonLabels,

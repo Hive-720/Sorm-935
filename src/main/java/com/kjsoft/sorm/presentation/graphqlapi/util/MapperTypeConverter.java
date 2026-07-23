@@ -11,8 +11,8 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.type.base.IpType.IPV4;
-import static com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.type.base.IpType.IPV6;
+import static com.kjsoft.sorm.graphql.generated.model.IpTypeGql.IPV4;
+import static com.kjsoft.sorm.graphql.generated.model.IpTypeGql.IPV6;
 
 
 //TODO подумать и раскидать по местам если что

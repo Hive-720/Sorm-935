@@ -1,7 +1,7 @@
 package com.kjsoft.sorm.presentation.graphqlapi.operation.queryresolver;
 
 import com.kjsoft.sorm.service.whmcsdata.dataservice.contact.ContactService;
-import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.ContactFilterInput;
+import com.kjsoft.sorm.graphql.generated.model.ContactFilterInputGql;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.input.mapper.ContactFilterPresentationMapper;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.type.result.ContactResult;
 import com.kjsoft.sorm.presentation.graphqlapi.operation.typedefinition.type.result.mapper.ContactResultMapper;
@@ -24,7 +24,7 @@ public class ContactResolver {
 
 
     @SchemaMapping(typeName = "QueryMessage")
-    public Mono<ContactResult> contacts(@Argument ContactFilterInput filter, @Argument Integer offset,
+    public Mono<ContactResult> contacts(@Argument ContactFilterInputGql filter, @Argument Integer offset,
                                         @Argument Integer limit, @Argument String cursor) {
         var searchFilter = contactFilterMapper.map(filter);
         return contactService.search(searchFilter, cursor, offset, limit)
