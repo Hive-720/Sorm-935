@@ -34,8 +34,7 @@ public class ClientDetailSyncScheduler extends Scheduler<ClientDetailsSyncPage, 
     }
 
     @Override
-    protected Mono<Step<ClientDetailsSyncPage>> executeStep(
-            Long ignored, String clientCursor) {
+    protected Mono<Step<ClientDetailsSyncPage>> executeStep(Long ignored, String clientCursor) {
         var clientCursorLong = clientCursor != null ? Long.parseLong(clientCursor) : null;
         return clientSyncService.getActualClientDetails(clientCursorLong, config.getClientLimit(), config.getConcurrency())
                 .map(page -> new Step<>(
