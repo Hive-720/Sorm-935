@@ -17,6 +17,7 @@ import reactor.core.publisher.Mono;
 import java.util.Set;
 
 import static com.kjsoft.sorm.syncdatascheduler.scheduler.SchedulerType.CLIENT;
+import static com.kjsoft.sorm.syncdatascheduler.scheduler.SchedulerType.CREDIT;
 
 
 @Component
@@ -29,7 +30,7 @@ public class CreditSyncScheduler extends Scheduler<CreditSyncPage, CreditSchedul
                                SchedulerTaskRepository schedulerTaskRepository, DateUtils date,
                                TransactionalOperator transactional, SchedulerCoordinator coordinator,
                                CreditSyncService creditSyncService) {
-        super(config, schedulerHelper, schedulerTaskRepository, date, transactional, coordinator);
+        super(CREDIT, config, schedulerHelper, schedulerTaskRepository, date, transactional, coordinator);
         this.creditSyncService = creditSyncService;
     }
 

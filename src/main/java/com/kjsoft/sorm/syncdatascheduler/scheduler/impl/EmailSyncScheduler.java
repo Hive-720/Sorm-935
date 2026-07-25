@@ -17,6 +17,7 @@ import reactor.core.publisher.Mono;
 import java.util.Set;
 
 import static com.kjsoft.sorm.syncdatascheduler.scheduler.SchedulerType.CLIENT;
+import static com.kjsoft.sorm.syncdatascheduler.scheduler.SchedulerType.EMAIL;
 
 
 @Component
@@ -29,7 +30,7 @@ public class EmailSyncScheduler extends Scheduler<EmailSyncPage, EmailSchedulerP
                               SchedulerTaskRepository schedulerTaskRepository, DateUtils dateTime,
                               TransactionalOperator transactional, SchedulerCoordinator coordinator,
                               EmailSyncService emailSyncService) {
-        super(config, schedulerHelper, schedulerTaskRepository, dateTime, transactional, coordinator);
+        super(EMAIL, config, schedulerHelper, schedulerTaskRepository, dateTime, transactional, coordinator);
         this.emailSyncService = emailSyncService;
     }
 

@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.reactive.TransactionalOperator;
 import reactor.core.publisher.Mono;
 
+import static com.kjsoft.sorm.syncdatascheduler.scheduler.SchedulerType.CLIENT;
+
 
 @Component
 @ConditionalOnBean(ClientSchedulerPropertiesConfig.class)
@@ -24,7 +26,7 @@ public class ClientSyncScheduler extends Scheduler<ClientSyncPage, ClientSchedul
                                SchedulerTaskRepository schedulerTaskRepository, DateUtils dateTime,
                                TransactionalOperator transactional, SchedulerCoordinator coordinator,
                                ClientSyncService clientSyncService) {
-        super(config, schedulerHelper, schedulerTaskRepository, dateTime, transactional, coordinator);
+        super(CLIENT, config, schedulerHelper, schedulerTaskRepository, dateTime, transactional, coordinator);
         this.clientSyncService = clientSyncService;
     }
 

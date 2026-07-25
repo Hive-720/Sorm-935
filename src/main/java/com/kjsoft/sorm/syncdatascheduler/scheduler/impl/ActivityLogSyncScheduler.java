@@ -16,6 +16,8 @@ import reactor.core.publisher.Mono;
 
 import java.time.OffsetDateTime;
 
+import static com.kjsoft.sorm.syncdatascheduler.scheduler.SchedulerType.ACTIVITY_LOG;
+
 
 @Component
 @ConditionalOnBean(ActivityLogSchedulerPropertiesConfig.class)
@@ -27,7 +29,7 @@ public class ActivityLogSyncScheduler extends Scheduler<ActivityLogSyncPage, Act
                                     SchedulerTaskRepository schedulerTaskRepository, DateUtils dateTime,
                                     TransactionalOperator transactional, SchedulerCoordinator coordinator,
                                     ActivityLogSyncService activityLogSyncService) {
-        super(config, schedulerHelper, schedulerTaskRepository, dateTime, transactional, coordinator);
+        super(ACTIVITY_LOG, config, schedulerHelper, schedulerTaskRepository, dateTime, transactional, coordinator);
         this.activityLogSyncService = activityLogSyncService;
     }
 

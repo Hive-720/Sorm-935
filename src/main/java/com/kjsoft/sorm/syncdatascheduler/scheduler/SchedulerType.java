@@ -4,8 +4,6 @@ import com.kjsoft.sorm.syncdatascheduler.scheduler.impl.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.util.Arrays;
-
 
 @Getter
 @AllArgsConstructor
@@ -29,11 +27,4 @@ public enum SchedulerType {
     private final String commonName;
     private final Class<? extends Scheduler> clazz;
 
-
-    public static SchedulerType getType(Class<? extends Scheduler> clazz) {
-        return Arrays.stream(values())
-                .filter(type -> type.clazz == clazz)
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("SchedulerType for class " + clazz.getSimpleName() + " not found"));
-    }
 }

@@ -15,6 +15,8 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
+import static com.kjsoft.sorm.syncdatascheduler.scheduler.SchedulerType.CLIENT_GROUP;
+
 
 @Component
 @ConditionalOnBean(ClientGroupSchedulerPropertiesConfig.class)
@@ -26,7 +28,7 @@ public class ClientGroupSyncScheduler extends Scheduler<List<ClientGroup>, Clien
                                     SchedulerTaskRepository schedulerTaskRepository, DateUtils dateTime,
                                     TransactionalOperator transactional, SchedulerCoordinator coordinator,
                                     ClientGroupSyncService clientGroupSyncService) {
-        super(config, schedulerHelper, schedulerTaskRepository, dateTime, transactional, coordinator);
+        super(CLIENT_GROUP, config, schedulerHelper, schedulerTaskRepository, dateTime, transactional, coordinator);
         this.clientGroupSyncService = clientGroupSyncService;
     }
 

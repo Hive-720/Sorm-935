@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.reactive.TransactionalOperator;
 import reactor.core.publisher.Mono;
 
+import static com.kjsoft.sorm.syncdatascheduler.scheduler.SchedulerType.CONTACT;
+
 
 @Component
 @ConditionalOnBean(ContactSchedulerPropertiesConfig.class)
@@ -24,7 +26,7 @@ public class ContactSyncScheduler extends Scheduler<ContactSyncPage, ContactSche
                                 SchedulerTaskRepository schedulerTaskRepository, DateUtils dateTime,
                                 TransactionalOperator transactional, SchedulerCoordinator coordinator,
                                 ContactSyncService contactSyncService) {
-        super(config, schedulerHelper, schedulerTaskRepository, dateTime, transactional, coordinator);
+        super(CONTACT, config, schedulerHelper, schedulerTaskRepository, dateTime, transactional, coordinator);
         this.contactSyncService = contactSyncService;
     }
 

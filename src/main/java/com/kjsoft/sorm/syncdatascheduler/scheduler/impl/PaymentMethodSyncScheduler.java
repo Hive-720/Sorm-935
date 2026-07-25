@@ -13,8 +13,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.reactive.TransactionalOperator;
 import reactor.core.publisher.Mono;
 
-
 import java.util.List;
+
+import static com.kjsoft.sorm.syncdatascheduler.scheduler.SchedulerType.PAYMENT_METHOD;
 
 
 @Component
@@ -27,7 +28,7 @@ public class PaymentMethodSyncScheduler extends Scheduler<List<PaymentMethod>, P
                                       SchedulerTaskRepository schedulerTaskRepository, DateUtils dateTime,
                                       TransactionalOperator transactional, SchedulerCoordinator coordinator,
                                       PaymentMethodSyncService paymentMethodService) {
-        super(config, schedulerHelper, schedulerTaskRepository, dateTime, transactional, coordinator);
+        super(PAYMENT_METHOD, config, schedulerHelper, schedulerTaskRepository, dateTime, transactional, coordinator);
         this.paymentMethodService = paymentMethodService;
     }
 

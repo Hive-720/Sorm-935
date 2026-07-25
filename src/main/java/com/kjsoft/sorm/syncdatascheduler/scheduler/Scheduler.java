@@ -34,7 +34,7 @@ public abstract class Scheduler<D, C extends SchedulerPropertiesConfig> {
     private final CronExpression cron;
 
 
-    public Scheduler(C config, SchedulerHelper schedulerHelper,
+    public Scheduler(SchedulerType schedulerType, C config, SchedulerHelper schedulerHelper,
                      SchedulerTaskRepository schedulerTaskRepository, DateUtils date, TransactionalOperator transactional,
                      SchedulerCoordinator schedulerCoordinator) {
         this.config = config;
@@ -44,7 +44,7 @@ public abstract class Scheduler<D, C extends SchedulerPropertiesConfig> {
         this.transactionalOperator = transactional;
         this.schedulerCoordinator = schedulerCoordinator;
         this.cron = CronExpression.parse(config.getCronExpression());
-        this.schedulerType = SchedulerType.getType(getClass());
+        this.schedulerType = schedulerType;
     }
 
     @PostConstruct

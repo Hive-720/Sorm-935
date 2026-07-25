@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.reactive.TransactionalOperator;
 import reactor.core.publisher.Mono;
 
+import static com.kjsoft.sorm.syncdatascheduler.scheduler.SchedulerType.AFFILIATE;
+
 
 @Component
 @ConditionalOnBean(AffiliateSchedulerPropertiesConfig.class)
@@ -24,7 +26,7 @@ public class AffiliateSyncScheduler extends Scheduler<AffiliateSyncPage, Affilia
                                   SchedulerTaskRepository schedulerTaskRepository, DateUtils dateTime,
                                   TransactionalOperator transactional, SchedulerCoordinator coordinator,
                                   AffiliateSyncService affiliateSyncService) {
-        super(config, schedulerHelper, schedulerTaskRepository, dateTime, transactional, coordinator);
+        super(AFFILIATE, config, schedulerHelper, schedulerTaskRepository, dateTime, transactional, coordinator);
         this.affiliateSyncService = affiliateSyncService;
     }
 

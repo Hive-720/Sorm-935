@@ -17,6 +17,7 @@ import reactor.core.publisher.Mono;
 import java.util.Set;
 
 import static com.kjsoft.sorm.syncdatascheduler.scheduler.SchedulerType.CLIENT;
+import static com.kjsoft.sorm.syncdatascheduler.scheduler.SchedulerType.CLIENT_DETAIL;
 
 
 @Component
@@ -29,7 +30,7 @@ public class ClientDetailSyncScheduler extends Scheduler<ClientDetailsSyncPage, 
                                      SchedulerTaskRepository schedulerTaskRepository, DateUtils date,
                                      TransactionalOperator transactional, SchedulerCoordinator coordinator,
                                      ClientSyncService clientSyncService) {
-        super(config, schedulerHelper, schedulerTaskRepository, date, transactional, coordinator);
+        super(CLIENT_DETAIL, config, schedulerHelper, schedulerTaskRepository, date, transactional, coordinator);
         this.clientSyncService = clientSyncService;
     }
 

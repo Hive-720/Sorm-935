@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.reactive.TransactionalOperator;
 import reactor.core.publisher.Mono;
 
+import static com.kjsoft.sorm.syncdatascheduler.scheduler.SchedulerType.INVOICE;
+
 
 @Component
 @ConditionalOnBean(InvoiceSchedulerPropertiesConfig.class)
@@ -24,7 +26,7 @@ public class InvoiceSyncScheduler extends Scheduler<InvoiceSyncPage, InvoiceSche
                                 SchedulerTaskRepository schedulerTaskRepository, DateUtils dateTime,
                                 TransactionalOperator transactional, SchedulerCoordinator coordinator,
                                 InvoiceSyncService invoiceSyncService) {
-        super(config, schedulerHelper, schedulerTaskRepository, dateTime, transactional, coordinator);
+        super(INVOICE, config, schedulerHelper, schedulerTaskRepository, dateTime, transactional, coordinator);
         this.invoiceSyncService = invoiceSyncService;
     }
 

@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.reactive.TransactionalOperator;
 import reactor.core.publisher.Mono;
 
+import static com.kjsoft.sorm.syncdatascheduler.scheduler.SchedulerType.ORDER;
+
 
 @Component
 @ConditionalOnBean(OrderSchedulerPropertiesConfig.class)
@@ -24,7 +26,7 @@ public class OrderSyncScheduler extends Scheduler<OrderSyncPage, OrderSchedulerP
                               SchedulerTaskRepository schedulerTaskRepository, DateUtils dateTime,
                               TransactionalOperator transactional, SchedulerCoordinator coordinator,
                               OrderSyncService orderSyncService) {
-        super(config, schedulerHelper, schedulerTaskRepository, dateTime, transactional, coordinator);
+        super(ORDER, config, schedulerHelper, schedulerTaskRepository, dateTime, transactional, coordinator);
         this.orderSyncService = orderSyncService;
     }
 
