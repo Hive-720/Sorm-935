@@ -37,11 +37,11 @@ public class SchedulerTask {
     }
 
     public boolean isNotFinished() {
-        return !status.equals(FINISHED);
+        return !FINISHED.equals(status);
     }
 
     public boolean isFinished() {
-        return status.equals(FINISHED);
+        return FINISHED.equals(status);
     }
 
     public enum Status {

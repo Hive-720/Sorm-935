@@ -94,7 +94,7 @@ public class InvoiceRepositoryImpl implements InvoiceRepository {
     public Mono<Boolean> updateAll(List<Invoice> invoices) {
         return databaseClient.inConnection(connection -> {
             var statement = connection.createStatement("""
-                    UPDATE contacts
+                    UPDATE invoices
                     SET sub_total = $1,
                         total = $2,
                         credit = $3,
@@ -122,18 +122,18 @@ public class InvoiceRepositoryImpl implements InvoiceRepository {
                         var index = tuple.getT1();
                         var entity = tuple.getT2();
 
-                        bindOrNull(stmt, 0, entity.getSubTotal(), String.class);
-                        bindOrNull(stmt, 1, entity.getTotal(), String.class);
-                        bindOrNull(stmt, 2, entity.getCredit(), String.class);
-                        bindOrNull(stmt, 3, entity.getBalance(), String.class);
-                        bindOrNull(stmt, 4, entity.getTax(), String.class);
-                        bindOrNull(stmt, 5, entity.getTax2(), String.class);
-                        bindOrNull(stmt, 6, entity.getTaxRate(), String.class);
-                        bindOrNull(stmt, 7, entity.getTaxRate2(), String.class);
+                        bindOrNull(stmt, 0, entity.getSubTotal(), BigDecimal.class);
+                        bindOrNull(stmt, 1, entity.getTotal(), BigDecimal.class);
+                        bindOrNull(stmt, 2, entity.getCredit(), BigDecimal.class);
+                        bindOrNull(stmt, 3, entity.getBalance(), BigDecimal.class);
+                        bindOrNull(stmt, 4, entity.getTax(), BigDecimal.class);
+                        bindOrNull(stmt, 5, entity.getTax2(), BigDecimal.class);
+                        bindOrNull(stmt, 6, entity.getTaxRate(), BigDecimal.class);
+                        bindOrNull(stmt, 7, entity.getTaxRate2(), BigDecimal.class);
                         bindOrNull(stmt, 8, entity.getStatus(), String.class);
                         bindOrNull(stmt, 9, entity.getCurrency(), String.class);
                         bindOrNull(stmt, 10, entity.getPaymentMethod(), String.class);
-                        bindOrNull(stmt, 11, entity.getItems(), String.class);
+                        bindOrNull(stmt, 11, entity.getItems(), Json.class);
                         bindOrNull(stmt, 12, entity.getDueDate(), OffsetDateTime.class);
                         bindOrNull(stmt, 13, entity.getDatePaid(), OffsetDateTime.class);
                         bindOrNull(stmt, 14, entity.getDateRefunded(), OffsetDateTime.class);

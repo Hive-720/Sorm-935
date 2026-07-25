@@ -47,7 +47,7 @@ public class ContactRepositoryImpl implements ContactRepository {
     public Mono<Boolean> addAll(List<Contact> contacts) {
         return databaseClient.inConnection(connection -> {
             var statement = connection.createStatement(""" 
-                    INSERT INTO client_products
+                    INSERT INTO contacts
                     (id, client_id, full_name, first_name, last_name, company_name, email, address,
                     city, state, postcode, country, msisdn, tax_id, created_at, updated_at)
                     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)

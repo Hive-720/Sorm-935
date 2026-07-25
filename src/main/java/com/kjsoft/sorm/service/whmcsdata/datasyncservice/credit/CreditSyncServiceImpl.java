@@ -48,7 +48,7 @@ public class CreditSyncServiceImpl implements CreditSyncService {
                         .map(list -> {
                                     var hasMoreByLimit = list.size() > applyDataLimit;
                                     var newCursor = getNewCursor(hasMoreByLimit, list, applyDataLimit,
-                                            idsResult.clientIds(), clintCursorById);
+                                            idsResult.clientIds());
 
                                     return CreditSyncPage.builder()
                                             .credits(list)
@@ -61,12 +61,14 @@ public class CreditSyncServiceImpl implements CreditSyncService {
     }
 
     private Long getNewCursor(boolean hasMoreByLimit, List<Credit> list, long applyDataLimit,
-                              List<Long> clientsIds, Long initialCursor) {
-        var finalCredits = hasMoreByLimit ? list.subList(0, (int) applyDataLimit) : list;
-        if (!finalCredits.isEmpty() && hasMoreByLimit) {
-            var lastIncludedClientId = finalCredits.getLast().getClientId();
-            var lastIdx = clientsIds.indexOf(lastIncludedClientId);
-            return lastIdx > 0 ? clientsIds.get(lastIdx - 1) : initialCursor;
+                              List<Long> clientsIds) {
+        if (hasMoreByLimit) {
+            var result = list.subList(0, (int) applyDataLimit);
+            if (!result.isEmpty()) {
+                var lastIncludedClientId = result.getLast().getClientId();
+                var lastIdx = clientsIds.indexOf(lastIncludedClientId);
+                return lastIdx >= 0 ? clientsIds.get(lastIdx) : clientsIds.getLast();
+            }
         }
 
         return clientsIds.getLast();

@@ -36,7 +36,7 @@ public class ProductSyncServiceImpl implements ProductSyncService {
 
     @Override
     public Mono<ProductSync> getActualProducts() {
-        var productFlux = whmcs.getProducts();
+        var productFlux = whmcs.getProducts().cache();
         return Mono.zip(
                         collectProduct(productFlux),
                         collectProductConfig(productFlux),

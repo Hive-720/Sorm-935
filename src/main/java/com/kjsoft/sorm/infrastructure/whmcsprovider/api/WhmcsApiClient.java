@@ -59,6 +59,7 @@ public class WhmcsApiClient {
                     var errorCode = getErrorByMessage(error.getMessage());
                     return Mono.error(new ProviderException(errorCode, error.getMessage()));
                 })
+                .switchIfEmpty(Mono.error(new ProviderException(EXTERNAL_ERROR, "HTTP " + statusCode + " with empty body")))
                 .cast(Throwable.class);
     }
 
