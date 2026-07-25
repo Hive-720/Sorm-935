@@ -1,0 +1,12 @@
+package com.grunvald.sorm.service.whmcsprovider.dto.mapper;
+
+import com.grunvald.sorm.service.whmcsdata.dataservice.product.model.ProductConfig;
+import com.grunvald.sorm.service.whmcsprovider.dto.ProductProviderDto;
+import org.mapstruct.Mapper;
+
+
+@Mapper(componentModel = "spring")
+public interface ProductConfigMapper {
+
+    ProductConfig map(ProductProviderDto.Config config);
+}

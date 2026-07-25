@@ -1,10 +1,10 @@
-import com.kjsoft.sorm.SormApplication;
-import com.kjsoft.sorm.presentation.graphqlapi.operation.QueryResolver;
-import com.kjsoft.sorm.service.whmcsdata.dataservice.affiliate.AffiliateRepository;
-import com.kjsoft.sorm.service.whmcsdata.dataservice.affiliate.model.Affiliate;
-import com.kjsoft.sorm.service.whmcsdata.dataservice.paymentmethod.PaymentMethodRepository;
-import com.kjsoft.sorm.service.whmcsdata.dataservice.paymentmethod.model.PaymentMethod;
-import com.kjsoft.sorm.util.DateUtils;
+import com.grunvald.sorm.SormApplication;
+import com.grunvald.sorm.presentation.graphqlapi.operation.QueryResolver;
+import com.grunvald.sorm.service.whmcsdata.dataservice.affiliate.AffiliateRepository;
+import com.grunvald.sorm.service.whmcsdata.dataservice.affiliate.model.Affiliate;
+import com.grunvald.sorm.service.whmcsdata.dataservice.paymentmethod.PaymentMethodRepository;
+import com.grunvald.sorm.service.whmcsdata.dataservice.paymentmethod.model.PaymentMethod;
+import com.grunvald.sorm.util.DateUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

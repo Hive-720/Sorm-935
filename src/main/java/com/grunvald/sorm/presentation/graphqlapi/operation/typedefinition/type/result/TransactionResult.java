@@ -1,0 +1,9 @@
+package com.grunvald.sorm.presentation.graphqlapi.operation.typedefinition.type.result;
+
+import com.grunvald.sorm.presentation.graphqlapi.operation.typedefinition.type.Transaction;
+
+import java.util.List;
+
+
+public record TransactionResult(String cursor, Boolean hasNextPage, List<Transaction> result) {
+}

@@ -1,0 +1,35 @@
+package com.grunvald.sorm.service.whmcsdata.datasyncservice.paymentmethod;
+
+import com.grunvald.sorm.service.whmcsdata.dataservice.paymentmethod.PaymentMethodService;
+import com.grunvald.sorm.service.whmcsdata.dataservice.paymentmethod.model.PaymentMethod;
+import com.grunvald.sorm.service.whmcsprovider.dto.mapper.PaymentMethodMapper;
+import com.grunvald.sorm.service.whmcsprovider.WhmcsProvider;
+import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
+
+import java.util.List;
+
+
+@Service
+@RequiredArgsConstructor
+@ConditionalOnBean(WhmcsProvider.class)
+public class PaymentMethodSyncServiceImpl implements PaymentMethodSyncService {
+    private final PaymentMethodService paymentMethodService;
+    private final WhmcsProvider whmcs;
+    private final PaymentMethodMapper mapper;
+
+
+    @Override
+    public Mono<List<PaymentMethod>> getActualData() {
+        return whmcs.getPaymentMethods()
+                .map(mapper::map)
+                .collectList();
+    }
+
+    @Override
+    public Mono<Boolean> applyActualData(List<PaymentMethod> data) {
+        return paymentMethodService.saveOrUpdateAll(data);
+    }
+}
