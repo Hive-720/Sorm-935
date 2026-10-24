@@ -1,32 +1,30 @@
 server:
-  port: 9931
+  port: 0
 
 spring:
   application:
     name: sorm-935
   graphql:
     path: /query
-    graphiql:
-      enabled: true
-    schema:
-      printer:
-        enabled: true
-    websocket:
-      path: /subscription
-      connection-init-timeout: 10000s
-      keep-alive: 3000000s
   r2dbc:
-    username: postgres
-    password: 123
-    url: r2dbc:postgresql://host.docker.internal:5433/Sorm?currentSchema=sorm_schema
     pool:
       enabled: true
-      initial-size: 10
-      max-idle-time: 1m
-      max-size: 30
+      initial-size: 2
+      max-size: 10
   liquibase:
-    url: jdbc:postgresql://host.docker.internal:5433/Sorm?currentSchema=sorm_schema
-    user: postgres
-    password: 123
     driver-class-name: org.postgresql.Driver
     default-schema: sorm_schema
+
+management:
+  server:
+    port: 0
+
+sorm:
+  system:
+    notifications:
+      reload: false # не пушить стартовую нотификацию, чтобы не ломать ожидания по числу строк в БД
+  graphql:
+    schema:
+      version_check:
+        enabled: false # асинхронная проверка целостности схемы пишет в БД в фоне
+                       # и гоняется с TRUNCATE между тестами (дедлок в PostgreSQL)

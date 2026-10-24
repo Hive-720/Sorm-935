@@ -118,6 +118,7 @@ jacocoTestReport {
 }
 
 tasks.register('testCoverageReport', JacocoReport) {
+    dependsOn tasks.named('test'), tasks.named('integrationTest')
     sourceSets sourceSets.main
     executionData file("${buildDir}/jacoco/test.exec"), file("${buildDir}/jacoco/integrationTest.exec")
     reports {
