@@ -16,7 +16,7 @@ import org.springframework.validation.annotation.Validated;
 @Setter
 @Validated
 @Configuration
-@ConfigurationProperties(prefix = "sorm.whmcs.data-sync.user")
+@ConfigurationProperties(prefix = "sorm.whmcs.data-sync.schedulers.user")
 @ConditionalOnBean(SyncConfig.class)
 @ConditionalOnProperty(name = "sorm.whmcs.data_sync.schedulers.user.enabled",
         havingValue = "true", matchIfMissing = true)

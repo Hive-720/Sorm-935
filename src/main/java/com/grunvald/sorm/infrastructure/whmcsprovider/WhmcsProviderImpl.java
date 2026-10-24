@@ -55,7 +55,7 @@ public class WhmcsProviderImpl implements WhmcsProvider {
                         .collectList()
                         .map(list -> ActivityLogsResult.builder()
                                 .elements(list)
-                                .hashNextPage(hashNextPage(list.size(), limit, res.getTotalCount()))
+                                .hashNextPage(hashNextPage(offset, list.size(), res.getTotalCount()))
                                 .nextOffset(offset + list.size())
                                 .build()
                         )
@@ -70,7 +70,7 @@ public class WhmcsProviderImpl implements WhmcsProvider {
                         .collectList()
                         .map(list -> AffiliatesResult.builder()
                                 .elements(list)
-                                .hasNextPage(hashNextPage(list.size(), limit, res.getTotalCount()))
+                                .hasNextPage(hashNextPage(offset, list.size(), res.getTotalCount()))
                                 .nextOffset(offset + list.size())
                                 .build()
                         )
@@ -85,7 +85,7 @@ public class WhmcsProviderImpl implements WhmcsProvider {
                         .collectList()
                         .map(list -> ClientsResult.builder()
                                 .elements(list)
-                                .hasNextPage(hashNextPage(list.size(), limit, res.getTotalCount()))
+                                .hasNextPage(hashNextPage(offset, list.size(), res.getTotalCount()))
                                 .nextOffset(offset + list.size())
                                 .build()
                         )
@@ -128,7 +128,7 @@ public class WhmcsProviderImpl implements WhmcsProvider {
                         .collectList()
                         .map(list -> ClientProductsResult.builder()
                                 .elements(list)
-                                .hasNextPage(hashNextPage(list.size(), limit, res.getTotalCount()))
+                                .hasNextPage(hashNextPage(offset, list.size(), res.getTotalCount()))
                                 .nextOffset(offset + list.size())
                                 .build()
                         )
@@ -144,7 +144,7 @@ public class WhmcsProviderImpl implements WhmcsProvider {
                         .collectList()
                         .map(list -> OrdersResult.builder()
                                 .elements(list)
-                                .hasNextPage(hashNextPage(list.size(), limit, res.getTotalCount()))
+                                .hasNextPage(hashNextPage(offset, list.size(), res.getTotalCount()))
                                 .nextOffset(offset + list.size())
                                 .build()
                         )
@@ -159,7 +159,7 @@ public class WhmcsProviderImpl implements WhmcsProvider {
                         .collectList()
                         .map(list -> ContactsResult.builder()
                                 .elements(list)
-                                .hasNextPage(hashNextPage(list.size(), limit, response.getTotalCount()))
+                                .hasNextPage(hashNextPage(offset, list.size(), response.getTotalCount()))
                                 .nextOffset(offset + list.size())
                                 .build()
                         )
@@ -186,7 +186,7 @@ public class WhmcsProviderImpl implements WhmcsProvider {
                         .collectList()
                         .map(list -> EmailsResult.builder()
                                 .elements(list)
-                                .hasNextPage(hashNextPage(list.size(), limit, res.getTotalCount()))
+                                .hasNextPage(hashNextPage(offset, list.size(), res.getTotalCount()))
                                 .nextOffset(offset + list.size())
                                 .build()
                         )
@@ -209,7 +209,7 @@ public class WhmcsProviderImpl implements WhmcsProvider {
                         .collectList()
                         .map(list -> UsersResult.builder()
                                 .elements(list)
-                                .hashNextPage(hashNextPage(list.size(), limit, res.getTotalCount()))
+                                .hashNextPage(hashNextPage(offset, list.size(), res.getTotalCount()))
                                 .nextOffset(offset + list.size())
                                 .build()
                         )
@@ -233,7 +233,7 @@ public class WhmcsProviderImpl implements WhmcsProvider {
                         .collectList()
                         .map(list -> InvoicesResult.builder()
                                 .elements(list)
-                                .hasNextPage(hashNextPage(list.size(), limit, res.getTotalCount()))
+                                .hasNextPage(hashNextPage(offset, list.size(), res.getTotalCount()))
                                 .nextOffset(offset + list.size())
                                 .build()
                         )
@@ -264,7 +264,7 @@ public class WhmcsProviderImpl implements WhmcsProvider {
                 .toList();
     }
 
-    private boolean hashNextPage(int size, int limit, long totalCount) {
-        return size < limit || (size + limit) >= totalCount;
+    private boolean hashNextPage(long offset, int size, long totalCount) {
+        return offset + size < totalCount;
     }
 }

@@ -5,6 +5,7 @@ import com.grunvald.sorm.syncdatascheduler.scheduler.SchedulerType;
 import com.grunvald.sorm.service.system.notification.SystemNotificationService;
 import com.grunvald.sorm.service.system.notification.model.SystemNotification;
 import com.grunvald.sorm.service.system.notification.model.Type;
+import com.grunvald.sorm.util.DateUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.support.CronExpression;
@@ -27,6 +28,7 @@ import static com.grunvald.sorm.service.system.notification.model.Type.MAJORERRO
 public class SchedulerHelper {
     private final SystemNotificationService notifyService;
     private final NotificationPropertiesConfig notificationConfig;
+    private final DateUtils date;
 
 
     public Mono<Long> delayByCron(CronExpression cron, SchedulerType type) {
@@ -55,9 +57,9 @@ public class SchedulerHelper {
         return Retry.from(retrySignal ->
                 retrySignal.zipWith(Flux.range(1, delays.size()), (rs, attempt) -> attempt)
                         .flatMap(attempt -> {
-                            Duration delay = Duration.ofSeconds(delays.get(attempt - 1));
-                            log.warn("Scheduler [{}]: retry attempt {}/{}. Waiting for: {} sec",
-                                    type, attempt, delays.size(), delay.getSeconds());
+                            Duration delay = Duration.ofMillis(delays.get(attempt - 1));
+                            log.warn("Scheduler [{}]: retry attempt {}/{}. Waiting for: {} ms",
+                                    type, attempt, delays.size(), delay.toMillis());
                             return Mono.delay(delay);
                         })
         );
@@ -68,6 +70,7 @@ public class SchedulerHelper {
             notifyService.push(SystemNotification.builder()
                             .type(notifyType)
                             .message(msg)
+                            .createdAt(date.now())
                             .build()
                     )
                     .doOnError(e -> log.error("Scheduler [{}]: an unexpected error occurred when sending the notify", type, e))

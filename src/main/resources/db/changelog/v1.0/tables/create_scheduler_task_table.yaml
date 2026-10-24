@@ -4,11 +4,12 @@ databaseChangeLog:
       author: iklakotsky
       changes:
         - createTable:
-            tableName: scheduler_tasks
+            tableName: sync_tasks
             columns:
               - column:
                   name: id
                   type: BIGINT
+                  autoIncrement: true
                   constraints:
                     primaryKey: true
                     nullable: false

@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Data
 @Configuration
-@ConfigurationProperties(prefix = "sorm.whmcs.data_sync")
+@ConfigurationProperties(prefix = "sorm.whmcs.data-sync")
 @ConditionalOnProperty(name = "sorm.whmcs.data_sync.enabled", havingValue = "true")
 public class SyncConfig {
     private boolean enabled = false;

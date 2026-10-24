@@ -18,7 +18,7 @@ import static com.grunvald.sorm.syncdatascheduler.config.SchedulerPropertiesConf
 @Setter
 @Validated
 @Configuration
-@ConfigurationProperties(prefix = "sorm.whmcs.data-sync.contact_delete")
+@ConfigurationProperties(prefix = "sorm.whmcs.data-sync.schedulers.contact-delete")
 @ConditionalOnBean(SyncConfig.class)
 @ConditionalOnProperty(name = "sorm.whmcs.data_sync.schedulers.contact_delete.enabled",
         havingValue = "true", matchIfMissing = true)

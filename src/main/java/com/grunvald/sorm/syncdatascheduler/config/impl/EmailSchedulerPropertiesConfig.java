@@ -20,7 +20,7 @@ import java.util.List;
 @Setter
 @Validated
 @Configuration
-@ConfigurationProperties(prefix = "sorm.whmcs.data-sync.email")
+@ConfigurationProperties(prefix = "sorm.whmcs.data-sync.schedulers.email")
 @ConditionalOnBean(SyncConfig.class)
 @ConditionalOnProperty(name = "sorm.whmcs.data_sync.schedulers.email.enabled",
         havingValue = "true", matchIfMissing = true)

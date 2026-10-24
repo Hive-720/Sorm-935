@@ -20,7 +20,7 @@ import java.util.List;
 @Setter
 @Validated
 @Configuration
-@ConfigurationProperties(prefix = "sorm.whmcs.data_sync.schedulers.activity_log")
+@ConfigurationProperties(prefix = "sorm.whmcs.data-sync.schedulers.activity-log")
 @ConditionalOnBean(SyncConfig.class)
 @ConditionalOnProperty(name = "sorm.whmcs.data_sync.schedulers.activity_log.enabled",
         havingValue = "true", matchIfMissing = true)
