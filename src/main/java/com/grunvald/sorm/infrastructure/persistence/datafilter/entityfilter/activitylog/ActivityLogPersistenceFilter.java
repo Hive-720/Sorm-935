@@ -45,7 +45,7 @@ public class ActivityLogPersistenceFilter extends EntityFilter<ActivityLogPersis
             var userPredicate = user.toPredicate(joins);
             if (userPredicate != null) {
                 conditions.add(userPredicate);
-                joins.add(new Join(INNERJOIN, ACTIVITY_LOG.getClientId(), USER));
+                joins.add(new Join(INNERJOIN, ACTIVITY_LOG.getUserId(), USER));
             }
         }
 

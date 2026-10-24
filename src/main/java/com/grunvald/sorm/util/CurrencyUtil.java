@@ -11,7 +11,9 @@ public class CurrencyUtil {
 
     private static final Map<Integer, String> NUMERIC_TO_ALPHA3 = Currency.getAvailableCurrencies()
             .stream()
-            .collect(Collectors.toMap(Currency::getNumericCode, Currency::getCurrencyCode));
+            // у валют без цифрового кода (XFO, XFU) numericCode == 0, и они дают дубликаты ключей
+            .filter(currency -> currency.getNumericCode() > 0)
+            .collect(Collectors.toMap(Currency::getNumericCode, Currency::getCurrencyCode, (first, second) -> first));
 
     @Nullable
     public static String getValidCurrency(String currency) {

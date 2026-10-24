@@ -21,6 +21,8 @@ public class QEmail extends RelationalPathBase<EmailDb> implements QEntity {
     private final NumberPath<Long> clientId = createNumber("client_id", Long.class);
     private final StringPath subject = createString("subject");
     private final StringPath messageBody = createString("message_body");
+    // to — зарезервированное слово PostgreSQL, но как квалифицированная колонка (eml.to) допустимо без кавычек;
+    // в INSERT обязательно экранирование ("to")
     private final StringPath to = createString("to");
     private final ArrayPath<String, String> cc = createArray("cc", String.class);
     private final ArrayPath<String, String> bcc = createArray("bcc", String.class);

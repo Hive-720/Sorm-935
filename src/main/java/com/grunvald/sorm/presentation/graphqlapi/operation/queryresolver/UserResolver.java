@@ -34,8 +34,8 @@ public class UserResolver {
     }
 
     @SchemaMapping(typeName = "User", field = "clients")
-    public Mono<List<Client>> getProductConfigsForProduct(User user,
-                                                          DataLoader<Long, List<Client>> dataLoader) {
-        return Mono.fromFuture(dataLoader.load(user.id()));
+    public Mono<List<Client>> getClientsForUser(User user,
+                                                DataLoader<Long, List<Client>> clientsLoader) {
+        return Mono.fromFuture(clientsLoader.load(user.id()));
     }
 }

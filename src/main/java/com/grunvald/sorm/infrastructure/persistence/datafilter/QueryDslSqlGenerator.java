@@ -29,7 +29,9 @@ public class QueryDslSqlGenerator {
 
         var joins = new ArrayDeque<Join>();
         var predicate = filter.toPredicate(joins);
-        joins.add(new Join(DEFAULT, null, qEntity));
+        // корневая таблица должна быть первой в FROM, иначе querydsl отрендерит
+        // "from <связанная таблица> on ..., <корневая>" — невалидный SQL для PostgreSQL
+        joins.addFirst(new Join(DEFAULT, null, qEntity));
 
         var metadata = new DefaultQueryMetadata();
         metadata.setProjection(qEntity.getFieldsForSelectSql());
@@ -87,6 +89,22 @@ public class QueryDslSqlGenerator {
             this.sourceId = sourceId;
             this.targetId = targetId;
             this.targetEntity = targetEntity;
+        }
+
+        public JoinType getType() {
+            return type;
+        }
+
+        public NumberPath<Long> getSourceId() {
+            return sourceId;
+        }
+
+        public NumberPath<Long> getTargetId() {
+            return targetId;
+        }
+
+        public QEntity getTargetEntity() {
+            return targetEntity;
         }
     }
 }

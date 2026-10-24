@@ -88,27 +88,12 @@ public class Contact {
             changed = true;
         }
 
-        if (!Objects.equals(postcode, actual.getPostcode())) {
-            this.postcode = actual.getPostcode();
-            changed = true;
-        }
-
-        if (!Objects.equals(country, actual.getCountry())) {
-            this.country = actual.getCountry();
-            changed = true;
-        }
-
-        if (!Objects.equals(taxId, actual.getTaxId())) {
-            this.taxId = actual.getTaxId();
-            changed = true;
-        }
-
         if (!isOffsetDateTimeEqual(this.updatedAt, actual.updatedAt)) {
             this.updatedAt = actual.updatedAt;
             changed = true;
         }
 
-        if (Objects.equals(this.deleted, actual.deleted)) {
+        if (!Objects.equals(this.deleted, actual.deleted)) {
             this.deleted = actual.deleted;
             changed = true;
         }

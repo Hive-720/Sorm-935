@@ -26,6 +26,9 @@ public class ClientProductSyncServiceImpl implements ClientProductSyncService {
                         .map(mapper::map)
                         .collectList()
                         .map(list -> ClientProductSyncPage.builder()
+                                .elements(list)
+                                .hasNextPage(result.isHasNextPage())
+                                .nextOffset(result.getNextOffset())
                                 .build()
                         )
                 );

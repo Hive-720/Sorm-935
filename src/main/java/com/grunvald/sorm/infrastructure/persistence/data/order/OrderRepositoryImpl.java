@@ -151,7 +151,7 @@ public class OrderRepositoryImpl implements OrderRepository {
                         bindOrNull(stmt, 4, entity.getProductType(), String.class);
                         bindOrNull(stmt, 5, entity.getProductName(), String.class);
                         bindOrNull(stmt, 6, entity.getDomain(), String.class);
-                        bindOrNull(stmt, 7, entity.getBillingCycle(), String[].class);
+                        bindOrNull(stmt, 7, entity.getBillingCycle(), BigDecimal.class);
                         bindOrNull(stmt, 8, entity.getAmount(), BigDecimal.class);
                         bindOrNull(stmt, 9, entity.getStatus(), String.class);
 
@@ -194,7 +194,7 @@ public class OrderRepositoryImpl implements OrderRepository {
                         bindOrNull(stmt, 1, entity.getProductType(), String.class);
                         bindOrNull(stmt, 2, entity.getProductName(), String.class);
                         bindOrNull(stmt, 3, entity.getDomain(), String.class);
-                        bindOrNull(stmt, 4, entity.getBillingCycle(), String[].class);
+                        bindOrNull(stmt, 4, entity.getBillingCycle(), BigDecimal.class);
                         bindOrNull(stmt, 5, entity.getAmount(), BigDecimal.class);
                         bindOrNull(stmt, 6, entity.getStatus(), String.class);
                         stmt.bind(7, entity.getId());

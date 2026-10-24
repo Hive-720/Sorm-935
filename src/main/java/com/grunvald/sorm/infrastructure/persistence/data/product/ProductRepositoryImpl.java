@@ -55,7 +55,7 @@ public class ProductRepositoryImpl implements ProductRepository {
             var statement = connection.createStatement(""" 
                     INSERT INTO products
                     (id, type, name, description, pay_type, prices, updated_at, deleted)
-                    VALUES ($1, $2, $3, $4, $5, $6, $7)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
                     """);
 
             return Flux.fromIterable(products)
@@ -210,7 +210,7 @@ public class ProductRepositoryImpl implements ProductRepository {
     public Mono<Boolean> addAllConfigOption(List<ProductConfigOption> productConfigOptions) {
         return databaseClient.inConnection(connection -> {
             var statement = connection.createStatement(""" 
-                    INSERT INTO products
+                    INSERT INTO product_config_options
                     (id, product_config_id, name, prices)
                     VALUES ($1, $2, $3, $4)
                     """);
@@ -410,9 +410,8 @@ public class ProductRepositoryImpl implements ProductRepository {
     @Override
     public Flux<ProductConfigOption> findAllProductConfigOptionByProductConfigIdIn(Set<Long> ids) {
         return databaseClient.sql("""
-                        SELECT * FROM product_config_options pco
-                        INNER JOIN product_config_option_link pcol ON pco.id = pcol.product_config_id
-                        WHERE pcl.product_config_id IN (:ids)
+                        SELECT * FROM product_config_options
+                        WHERE product_config_id IN (:ids)
                         """)
                 .bind("ids", ids)
                 .mapProperties(ProductConfigOptionDb.class)
@@ -431,7 +430,7 @@ public class ProductRepositoryImpl implements ProductRepository {
     @Override
     public Flux<ProductConfigRelation> findAllProductConfigRelationByProductIdIn(Set<Long> ids) {
         return databaseClient.sql("SELECT * FROM product_config_relations WHERE product_id IN (:ids)")
-                .bind("productIds", ids)
+                .bind("ids", ids)
                 .mapProperties(ProductConfigRelationDb.class)
                 .all()
                 .map(productConfigRelationMapper::map);

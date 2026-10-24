@@ -6,7 +6,7 @@ import lombok.Getter;
 
 
 @Getter
-public abstract class Response {
+public class Response {
     @JsonProperty("result")
     @JsonAlias("error")
     protected String status;

@@ -33,8 +33,8 @@ public class OrderResolver {
     }
 
     @SchemaMapping(typeName = "Order", field = "items")
-    public Mono<List<OrderItem>> getItemsForOrder(Order order, DataLoader<Long, List<OrderItem>> dataLoader) {
-        return Mono.fromFuture(dataLoader.load(order.id()));
+    public Mono<List<OrderItem>> getItemsForOrder(Order order, DataLoader<Long, List<OrderItem>> orderItemsLoader) {
+        return Mono.fromFuture(orderItemsLoader.load(order.id()));
     }
 
     @SchemaMapping(typeName = "Order", field = "client")

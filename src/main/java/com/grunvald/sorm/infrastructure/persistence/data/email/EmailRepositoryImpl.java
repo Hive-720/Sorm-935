@@ -40,7 +40,7 @@ public class EmailRepositoryImpl implements EmailRepository {
         return databaseClient.inConnection(connection -> {
             var statement = connection.createStatement("""
                     INSERT INTO emails
-                    (id, client_id, subject, message_body, to, cc, bcc, date, created_at, updated_at)
+                    (id, client_id, subject, message_body, "to", cc, bcc, date, created_at, updated_at)
                     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
                     """);
 

@@ -28,7 +28,7 @@ public class CustomExceptionResolver implements DataFetcherExceptionResolver {
 
         if (unwrappedEx instanceof BadRequestException e) {
             log.debug(unwrappedEx.getMessage(), unwrappedEx);
-            message = e.getMessage();
+            message = e.getMessage() != null ? e.getMessage() : "Bad request";
             errorCode = BAD_REQUEST;
         } else {
             log.error("Unexpected error", unwrappedEx);

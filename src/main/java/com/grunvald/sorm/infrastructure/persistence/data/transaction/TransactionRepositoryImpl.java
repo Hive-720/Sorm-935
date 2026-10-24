@@ -94,7 +94,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
                         amount_in = $6,
                         amount_out = $7,
                         fees = $8,
-                        rate = $9,
+                        rate = $9
                     WHERE id = $10
                     """);
 
@@ -131,7 +131,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
 
     @Override
     public Flux<Transaction> findAllByIdIn(Set<Long> ids) {
-        return databaseClient.sql("SELECT * FROM users WHERE id IN(:ids)")
+        return databaseClient.sql("SELECT * FROM transactions WHERE id IN(:ids)")
                 .bind("ids", ids)
                 .mapProperties(TransactionDb.class)
                 .all()

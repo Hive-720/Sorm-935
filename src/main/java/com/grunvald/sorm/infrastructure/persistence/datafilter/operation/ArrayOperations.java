@@ -22,7 +22,7 @@ public class ArrayOperations {
             return null;
         }
 
-        return Expressions.booleanTemplate(ARRAY_EQUALS_ANY_PATTERN, Expressions.constant(value), column);
+        return Expressions.booleanTemplate(ARRAY_EQUALS_ANY_PATTERN, column, Expressions.constant(value));
     }
 
     public static BooleanExpression anyLike(ArrayPath<String, String> arrayColumn, String pattern) {

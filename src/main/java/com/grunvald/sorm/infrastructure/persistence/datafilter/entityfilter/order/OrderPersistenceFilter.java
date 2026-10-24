@@ -14,7 +14,6 @@ import lombok.Setter;
 import java.util.Deque;
 import java.util.List;
 
-import static com.grunvald.sorm.infrastructure.persistence.datafilter.entityfilter.affiliate.QAffiliate.AFFILIATE;
 import static com.grunvald.sorm.infrastructure.persistence.datafilter.entityfilter.client.QClient.CLIENT;
 import static com.grunvald.sorm.infrastructure.persistence.datafilter.entityfilter.invoice.QInvoice.INVOICE;
 import static com.grunvald.sorm.infrastructure.persistence.datafilter.entityfilter.order.QOrder.ORDER;
@@ -38,7 +37,7 @@ public class OrderPersistenceFilter extends EntityFilter<OrderPersistenceFilter>
             var clientPredicate = client.toPredicate(joins);
             if (clientPredicate != null) {
                 conditions.add(clientPredicate);
-                joins.add(new Join(INNERJOIN, AFFILIATE.getClientId(), CLIENT));
+                joins.add(new Join(INNERJOIN, ORDER.getClientId(), CLIENT));
             }
         }
 
@@ -46,7 +45,7 @@ public class OrderPersistenceFilter extends EntityFilter<OrderPersistenceFilter>
             var invoicePredicate = invoice.toPredicate(joins);
             if (invoicePredicate != null) {
                 conditions.add(invoicePredicate);
-                joins.add(new Join(INNERJOIN, ORDER.getClientId(), INVOICE));
+                joins.add(new Join(INNERJOIN, ORDER.getInvoiceId(), INVOICE));
             }
         }
 

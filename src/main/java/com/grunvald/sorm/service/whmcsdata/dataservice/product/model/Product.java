@@ -46,7 +46,7 @@ public class Product {
             changed = true;
         }
 
-        if (Price.isEqual(this.prices, actual.prices)) {
+        if (!Price.isEqual(this.prices, actual.prices)) {
             this.prices = actual.prices;
             changed = true;
         }

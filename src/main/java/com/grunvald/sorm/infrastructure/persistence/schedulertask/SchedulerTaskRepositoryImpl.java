@@ -51,7 +51,7 @@ public class SchedulerTaskRepositoryImpl implements SchedulerTaskRepository {
         spec = bindOrNull(spec, 2, taskDb.getOffset(), Long.class);
         spec = spec.bind(3, taskDb.getStatus());
         spec = spec.bind(4, taskDb.getStartAt());
-        spec = spec.bind(5, taskDb.getFinishAt());
+        spec = bindOrNull(spec, 5, taskDb.getFinishAt(), OffsetDateTime.class);
 
         return spec
                 .mapProperties(SchedulerTaskDb.class)

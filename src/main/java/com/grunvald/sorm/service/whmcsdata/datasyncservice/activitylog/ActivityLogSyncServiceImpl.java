@@ -50,6 +50,14 @@ public class ActivityLogSyncServiceImpl implements ActivityLogSyncService {
     }
 
     private boolean filterByDescription(List<String> filterTemplates, String description) {
+        if (filterTemplates == null || filterTemplates.isEmpty()) {
+            return true;
+        }
+
+        if (description == null) {
+            return true;
+        }
+
         return filterTemplates.stream()
                 .noneMatch(description::matches);
     }

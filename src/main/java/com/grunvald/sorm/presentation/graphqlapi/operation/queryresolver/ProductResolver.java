@@ -36,13 +36,13 @@ public class ProductResolver {
 
     @SchemaMapping(typeName = "Product", field = "configs")
     public Mono<List<ProductConfig>> getProductConfigsForProduct(Product product,
-                                                                 DataLoader<Long, List<ProductConfig>> dataLoader) {
-        return Mono.fromFuture(dataLoader.load(product.id()));
+                                                                 DataLoader<Long, List<ProductConfig>> productConfigsLoader) {
+        return Mono.fromFuture(productConfigsLoader.load(product.id()));
     }
 
     @SchemaMapping(typeName = "ProductConfig", field = "options")
     public Mono<List<ProductConfigOption>> getOptionsForProductConfig(ProductConfig productConfig,
-                                                                      DataLoader<Long, List<ProductConfigOption>> dataLoader) {
-        return Mono.fromFuture(dataLoader.load(productConfig.id()));
+                                                                      DataLoader<Long, List<ProductConfigOption>> productConfigOptionsLoader) {
+        return Mono.fromFuture(productConfigOptionsLoader.load(productConfig.id()));
     }
 }

@@ -20,9 +20,9 @@ public class QOrder extends RelationalPathBase<OrderDb> implements QEntity {
 
     private final NumberPath<Long> id = createNumber("id", Long.class);
     private final NumberPath<Long> clientId = createNumber("client_id", Long.class);
-    private final NumberPath<Long> contactId = createNumber("client_id", Long.class);
-    private final NumberPath<Long> invoiceId = createNumber("client_id", Long.class);
-    private final NumberPath<BigDecimal> amount = createNumber("client_id", BigDecimal.class);
+    private final NumberPath<Long> contactId = createNumber("contact_id", Long.class);
+    private final NumberPath<Long> invoiceId = createNumber("invoice_id", Long.class);
+    private final NumberPath<BigDecimal> amount = createNumber("amount", BigDecimal.class);
     private final StringPath currency = createString("currency");
     private final StringPath paymentMethod = createString("payment_method");
     private final StringPath status = createString("status");

@@ -148,6 +148,7 @@ public class ContactRepositoryImpl implements ContactRepository {
     @Override
     public Mono<Boolean> softDeleteAll(Set<Long> ids) {
         return databaseClient.sql("UPDATE contacts SET deleted = true WHERE id IN (:ids) AND deleted = false")
+                .bind("ids", ids)
                 .fetch()
                 .rowsUpdated()
                 .map(totalRows -> totalRows > 0);

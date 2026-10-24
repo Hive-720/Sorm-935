@@ -4,7 +4,7 @@ import com.grunvald.sorm.infrastructure.whmcsprovider.api.WhmcsAction;
 import com.grunvald.sorm.infrastructure.whmcsprovider.api.response.GetClientsDetailsResponse;
 import org.springframework.web.reactive.function.BodyInserters;
 
-import static com.grunvald.sorm.infrastructure.whmcsprovider.api.WhmcsAction.GET_CREDITS;
+import static com.grunvald.sorm.infrastructure.whmcsprovider.api.WhmcsAction.GET_CLIENT_DETAILS;
 
 
 public class GetClientDetailsRequest extends Request<GetClientsDetailsResponse> {
@@ -23,7 +23,7 @@ public class GetClientDetailsRequest extends Request<GetClientsDetailsResponse> 
 
     @Override
     public WhmcsAction getAction() {
-        return GET_CREDITS;
+        return GET_CLIENT_DETAILS;
     }
 
     @Override

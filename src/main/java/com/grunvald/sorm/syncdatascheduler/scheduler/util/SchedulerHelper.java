@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 
 import java.time.Duration;
-import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import static com.grunvald.sorm.service.system.notification.model.Type.CRITICALERROR;
@@ -32,11 +32,12 @@ public class SchedulerHelper {
 
 
     public Mono<Long> delayByCron(CronExpression cron, SchedulerType type) {
-        return Mono.fromSupplier(() -> cron.next(Instant.now()))
-                .flatMap(executionTime -> {
-                    var delay = Duration.between(Instant.now(), executionTime);
-                    log.debug("Scheduler [{}]: next task will be launched on {}. Waiting for: {}",
-                            type, executionTime, delay);
+        return Mono.fromSupplier(() -> {
+                    var now = ZonedDateTime.now();
+                    return Duration.between(now, cron.next(now));
+                })
+                .flatMap(delay -> {
+                    log.debug("Scheduler [{}]: waiting for the next launch: {}", type, delay);
                     return Mono.delay(delay);
                 });
     }

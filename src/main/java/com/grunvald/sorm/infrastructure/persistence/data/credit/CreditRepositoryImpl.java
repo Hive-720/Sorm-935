@@ -54,9 +54,9 @@ public class CreditRepositoryImpl implements CreditRepository {
 
                         stmt.bind(0, entity.getId());
                         stmt.bind(1, entity.getClientId());
-                        bindOrNull(stmt, 2, entity.getRelId(), BigDecimal.class);
-                        bindOrNull(stmt, 3, entity.getDescription(), OffsetDateTime.class);
-                        bindOrNull(stmt, 4, entity.getAmount(), OffsetDateTime.class);
+                        bindOrNull(stmt, 2, entity.getRelId(), Long.class);
+                        bindOrNull(stmt, 3, entity.getDescription(), String.class);
+                        bindOrNull(stmt, 4, entity.getAmount(), BigDecimal.class);
                         bindOrNull(stmt, 5, entity.getDate(), OffsetDateTime.class);
 
                         if (index < creditList.size() - 1) {

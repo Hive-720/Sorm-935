@@ -115,8 +115,8 @@ public class UserRepositoryImpl implements UserRepository {
         return databaseClient.inConnection(connection -> {
             var statement = connection.createStatement("""
                     INSERT INTO users
-                    (id, first_name, last_name, full_name, email, data_created)
-                    VALUES ($1, $2, $3, $4, $5)
+                    (id, first_name, last_name, full_name, email, date_created)
+                    VALUES ($1, $2, $3, $4, $5, $6)
                     """);
 
             return Flux.fromIterable(users)

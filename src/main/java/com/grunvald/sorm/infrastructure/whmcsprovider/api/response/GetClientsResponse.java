@@ -4,11 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.grunvald.sorm.infrastructure.whmcsprovider.api.deserializer.WhmcsOffsetDateTimeDeserializer;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 
 
+@Setter
 public class GetClientsResponse extends Response {
     private Clients clients;
 
@@ -16,6 +18,8 @@ public class GetClientsResponse extends Response {
         return clients != null && clients.client != null ? clients.client : List.of();
     }
 
+    @Getter
+    @Setter
     public static class Clients {
         private List<Client> client;
 
