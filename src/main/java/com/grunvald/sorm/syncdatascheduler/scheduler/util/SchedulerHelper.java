@@ -29,6 +29,7 @@ public class SchedulerHelper {
     private final SystemNotificationService notifyService;
     private final NotificationPropertiesConfig notificationConfig;
     private final DateUtils date;
+    private final SyncTaskMetrics syncTaskMetrics;
 
 
     public Mono<Long> delayByCron(CronExpression cron, SchedulerType type) {
@@ -43,6 +44,7 @@ public class SchedulerHelper {
     }
 
     public void handleFailure(Throwable e, SchedulerType type) {
+        syncTaskMetrics.schedulerStopped(type);
         log.error("Scheduler [{}]: an error has occurred. Scheduler has been stopped.", type, e);
         var msg = "[" + type + "]: при синхронизации данных с ИС произошла ошибка. Планировщик остановлен.";
         pushNotify(CRITICALERROR, msg, type);

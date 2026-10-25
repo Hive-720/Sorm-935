@@ -8,6 +8,7 @@ import com.grunvald.sorm.syncdatascheduler.scheduler.Scheduler;
 import com.grunvald.sorm.syncdatascheduler.scheduler.SchedulerType;
 import com.grunvald.sorm.syncdatascheduler.scheduler.util.SchedulerCoordinator;
 import com.grunvald.sorm.syncdatascheduler.scheduler.util.SchedulerHelper;
+import com.grunvald.sorm.syncdatascheduler.scheduler.util.SyncTaskMetrics;
 import com.grunvald.sorm.util.DateUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
@@ -29,8 +30,8 @@ public class EmailSyncScheduler extends Scheduler<EmailSyncPage, EmailSchedulerP
     public EmailSyncScheduler(EmailSchedulerPropertiesConfig config, SchedulerHelper schedulerHelper,
                               SchedulerTaskRepository schedulerTaskRepository, DateUtils dateTime,
                               TransactionalOperator transactional, SchedulerCoordinator coordinator,
-                              EmailSyncService emailSyncService) {
-        super(EMAIL, config, schedulerHelper, schedulerTaskRepository, dateTime, transactional, coordinator);
+                              EmailSyncService emailSyncService, SyncTaskMetrics syncTaskMetrics) {
+        super(EMAIL, config, schedulerHelper, schedulerTaskRepository, dateTime, transactional, coordinator, syncTaskMetrics);
         this.emailSyncService = emailSyncService;
     }
 

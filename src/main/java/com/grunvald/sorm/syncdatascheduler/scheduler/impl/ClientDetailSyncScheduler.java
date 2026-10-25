@@ -8,6 +8,7 @@ import com.grunvald.sorm.syncdatascheduler.scheduler.Scheduler;
 import com.grunvald.sorm.syncdatascheduler.scheduler.SchedulerType;
 import com.grunvald.sorm.syncdatascheduler.scheduler.util.SchedulerCoordinator;
 import com.grunvald.sorm.syncdatascheduler.scheduler.util.SchedulerHelper;
+import com.grunvald.sorm.syncdatascheduler.scheduler.util.SyncTaskMetrics;
 import com.grunvald.sorm.util.DateUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
@@ -29,8 +30,8 @@ public class ClientDetailSyncScheduler extends Scheduler<ClientDetailsSyncPage, 
     public ClientDetailSyncScheduler(ClientDetailSchedulerPropertiesConfig config, SchedulerHelper schedulerHelper,
                                      SchedulerTaskRepository schedulerTaskRepository, DateUtils date,
                                      TransactionalOperator transactional, SchedulerCoordinator coordinator,
-                                     ClientSyncService clientSyncService) {
-        super(CLIENT_DETAIL, config, schedulerHelper, schedulerTaskRepository, date, transactional, coordinator);
+                                     ClientSyncService clientSyncService, SyncTaskMetrics syncTaskMetrics) {
+        super(CLIENT_DETAIL, config, schedulerHelper, schedulerTaskRepository, date, transactional, coordinator, syncTaskMetrics);
         this.clientSyncService = clientSyncService;
     }
 

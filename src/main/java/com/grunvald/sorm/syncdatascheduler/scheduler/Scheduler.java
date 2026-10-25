@@ -5,6 +5,7 @@ import com.grunvald.sorm.syncdatascheduler.task.SchedulerTaskRepository;
 import com.grunvald.sorm.syncdatascheduler.config.SchedulerPropertiesConfig;
 import com.grunvald.sorm.syncdatascheduler.scheduler.util.SchedulerCoordinator;
 import com.grunvald.sorm.syncdatascheduler.scheduler.util.SchedulerHelper;
+import com.grunvald.sorm.syncdatascheduler.scheduler.util.SyncTaskMetrics;
 import com.grunvald.sorm.util.DateUtils;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
@@ -32,11 +33,12 @@ public abstract class Scheduler<D, C extends SchedulerPropertiesConfig> {
     protected final DateUtils date;
     private final SchedulerType schedulerType;
     private final CronExpression cron;
+    private final SyncTaskMetrics syncTaskMetrics;
 
 
     public Scheduler(SchedulerType schedulerType, C config, SchedulerHelper schedulerHelper,
                      SchedulerTaskRepository schedulerTaskRepository, DateUtils date, TransactionalOperator transactional,
-                     SchedulerCoordinator schedulerCoordinator) {
+                     SchedulerCoordinator schedulerCoordinator, SyncTaskMetrics syncTaskMetrics) {
         this.config = config;
         this.schedulerHelper = schedulerHelper;
         this.schedulerTaskRepository = schedulerTaskRepository;
@@ -45,6 +47,7 @@ public abstract class Scheduler<D, C extends SchedulerPropertiesConfig> {
         this.schedulerCoordinator = schedulerCoordinator;
         this.cron = CronExpression.parse(config.getCronExpression());
         this.schedulerType = schedulerType;
+        this.syncTaskMetrics = syncTaskMetrics;
     }
 
     @PostConstruct
@@ -133,6 +136,8 @@ public abstract class Scheduler<D, C extends SchedulerPropertiesConfig> {
     }
 
     private Mono<Boolean> executeTask(SchedulerTask schedulerTask) {
+        syncTaskMetrics.taskStarted(schedulerType);
+        var observation = syncTaskMetrics.startTaskObservation(schedulerType);
         return executeStep(schedulerTask.getOffset(), schedulerTask.getCursor())
                 .expand(stepResult -> {
                     if (!stepResult.hasNextPage) {
@@ -142,7 +147,13 @@ public abstract class Scheduler<D, C extends SchedulerPropertiesConfig> {
                     return executeStep(stepResult.nextOffset, stepResult.getNextCursor());
                 })
                 .concatMap(stepResult -> apply(stepResult, schedulerTask))
-                .last();
+                .last()
+                .doOnSuccess(ignore -> syncTaskMetrics.taskCompleted(schedulerType))
+                .doOnError(e -> {
+                    syncTaskMetrics.taskFailed(schedulerType);
+                    observation.error(e);
+                })
+                .doFinally(signal -> observation.stop());
     }
 
     protected abstract Mono<Step<D>> executeStep(Long offset, String cursor);

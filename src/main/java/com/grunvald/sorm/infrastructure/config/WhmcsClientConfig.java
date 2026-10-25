@@ -32,10 +32,10 @@ public class WhmcsClientConfig {
 
 
     @Bean
-    public WebClient whmcsWebClient(BuildProperties buildProperties) {
+    public WebClient whmcsWebClient(WebClient.Builder webClientBuilder, BuildProperties buildProperties) {
         var appVersion = buildProperties.getVersion();
         var appName = buildProperties.getName();
-        return WebClient.builder()
+        return webClientBuilder
                 .baseUrl(whmcsConfig.getClient().getUrl())
                 .defaultHeader(CONTENT_TYPE, APPLICATION_FORM_URLENCODED_VALUE)
                 .defaultHeader(ACCEPT, APPLICATION_JSON_VALUE)

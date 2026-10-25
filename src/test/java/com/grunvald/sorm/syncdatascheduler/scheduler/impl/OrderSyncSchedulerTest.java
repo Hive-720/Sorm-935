@@ -5,6 +5,7 @@ import com.grunvald.sorm.service.whmcsdata.datasyncservice.order.OrderSyncServic
 import com.grunvald.sorm.syncdatascheduler.config.impl.OrderSchedulerPropertiesConfig;
 import com.grunvald.sorm.syncdatascheduler.scheduler.util.SchedulerCoordinator;
 import com.grunvald.sorm.syncdatascheduler.scheduler.util.SchedulerHelper;
+import com.grunvald.sorm.syncdatascheduler.scheduler.util.SyncTaskMetrics;
 import com.grunvald.sorm.syncdatascheduler.task.SchedulerTaskRepository;
 import com.grunvald.sorm.util.DateUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,7 +34,7 @@ class OrderSyncSchedulerTest extends SyncSchedulerTestBase {
     @BeforeEach
     void setUp() {
         service = mock(OrderSyncService.class);
-        scheduler = new TestableScheduler(config(), helper, repository, date, transactional, coordinator, service);
+        scheduler = new TestableScheduler(config(), helper, repository, date, transactional, coordinator, service, metrics);
     }
 
     private OrderSchedulerPropertiesConfig config() {
@@ -92,8 +93,8 @@ class OrderSyncSchedulerTest extends SyncSchedulerTestBase {
 
         TestableScheduler(OrderSchedulerPropertiesConfig config, SchedulerHelper helper,
                           SchedulerTaskRepository repository, DateUtils date, TransactionalOperator transactional,
-                          SchedulerCoordinator coordinator, OrderSyncService service) {
-            super(config, helper, repository, date, transactional, coordinator, service);
+                          SchedulerCoordinator coordinator, OrderSyncService service, SyncTaskMetrics syncTaskMetrics) {
+            super(config, helper, repository, date, transactional, coordinator, service, syncTaskMetrics);
         }
 
         StepView execute(Long offset, String cursor) {

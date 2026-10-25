@@ -35,12 +35,14 @@ class SchedulerHelperTest {
     private NotificationPropertiesConfig notificationConfig;
     @Mock
     private DateUtils date;
+    @Mock
+    private SyncTaskMetrics syncTaskMetrics;
 
     private SchedulerHelper helper;
 
     @BeforeEach
     void setUp() {
-        helper = new SchedulerHelper(notifyService, notificationConfig, date);
+        helper = new SchedulerHelper(notifyService, notificationConfig, date, syncTaskMetrics);
     }
 
     @Test

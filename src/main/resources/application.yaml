@@ -23,6 +23,18 @@ management:
   endpoint:
     health:
       show-details: never
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+        http.client.requests: true
+        r2dbc.query: true
+        sorm.whmcs.api.request: true
+        sorm.sync.task.duration: true
+      slo:
+        http.server.requests: 100ms, 500ms, 2s
+        http.client.requests: 100ms, 500ms, 2s
+        r2dbc.query: 50ms, 200ms, 1s
 
 sorm:
   security:

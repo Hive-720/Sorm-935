@@ -3,9 +3,11 @@ package com.grunvald.sorm.syncdatascheduler.scheduler;
 import com.grunvald.sorm.syncdatascheduler.config.SchedulerPropertiesConfig;
 import com.grunvald.sorm.syncdatascheduler.scheduler.util.SchedulerCoordinator;
 import com.grunvald.sorm.syncdatascheduler.scheduler.util.SchedulerHelper;
+import com.grunvald.sorm.syncdatascheduler.scheduler.util.SyncTaskMetrics;
 import com.grunvald.sorm.syncdatascheduler.task.SchedulerTaskRepository;
 import com.grunvald.sorm.syncdatascheduler.task.model.SchedulerTask;
 import com.grunvald.sorm.util.DateUtils;
+import io.micrometer.observation.Observation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -50,6 +52,7 @@ class SchedulerTest {
     private DateUtils date;
     private TransactionalOperator transactional;
     private SchedulerCoordinator coordinator;
+    private SyncTaskMetrics metrics;
 
     @BeforeEach
     void setUp() {
@@ -58,6 +61,8 @@ class SchedulerTest {
         date = mock(DateUtils.class);
         transactional = mock(TransactionalOperator.class);
         coordinator = mock(SchedulerCoordinator.class);
+        metrics = mock(SyncTaskMetrics.class);
+        when(metrics.startTaskObservation(any())).thenReturn(Observation.NOOP);
         when(helper.createRetry(any(), any())).thenReturn(Retry.max(1));
         when(date.now()).thenReturn(NOW);
         when(transactional.transactional(any(Mono.class)))
@@ -289,27 +294,27 @@ class SchedulerTest {
 
     private TestScheduler scheduler(TestConfig config) {
         return new TestScheduler(config, helper, repository, date, transactional, coordinator,
-                List.of(), null, true, null);
+                List.of(), null, true, null, metrics);
     }
 
     private TestScheduler scheduler(TestConfig config, Set<SchedulerType> dependencies) {
         return new TestScheduler(config, helper, repository, date, transactional, coordinator,
-                List.of(), dependencies, true, null);
+                List.of(), dependencies, true, null, metrics);
     }
 
     private TestScheduler scheduler(TestConfig config, Scheduler.Step<String>... steps) {
         return new TestScheduler(config, helper, repository, date, transactional, coordinator,
-                List.of(steps), null, true, null);
+                List.of(steps), null, true, null, metrics);
     }
 
     private TestScheduler scheduler(TestConfig config, boolean saveState, Scheduler.Step<String>... steps) {
         return new TestScheduler(config, helper, repository, date, transactional, coordinator,
-                List.of(steps), null, saveState, null);
+                List.of(steps), null, saveState, null, metrics);
     }
 
     private TestScheduler scheduler(TestConfig config, RuntimeException failure, Scheduler.Step<String>... steps) {
         return new TestScheduler(config, helper, repository, date, transactional, coordinator,
-                List.of(steps), null, true, failure);
+                List.of(steps), null, true, failure, metrics);
     }
 
     private static Scheduler.Step<String> step(String data, boolean hasNext, long nextOffset, String nextCursor) {
@@ -331,8 +336,8 @@ class SchedulerTest {
         TestScheduler(TestConfig config, SchedulerHelper helper, SchedulerTaskRepository repository,
                       DateUtils date, TransactionalOperator transactional, SchedulerCoordinator coordinator,
                       List<Scheduler.Step<String>> steps, Set<SchedulerType> dependencies, boolean saveState,
-                      RuntimeException failure) {
-            super(ACTIVITY_LOG, config, helper, repository, date, transactional, coordinator);
+                      RuntimeException failure, SyncTaskMetrics syncTaskMetrics) {
+            super(ACTIVITY_LOG, config, helper, repository, date, transactional, coordinator, syncTaskMetrics);
             this.steps = steps;
             this.dependencies = dependencies;
             this.saveState = saveState;

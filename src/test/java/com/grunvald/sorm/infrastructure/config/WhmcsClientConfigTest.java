@@ -3,6 +3,7 @@ package com.grunvald.sorm.infrastructure.config;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.info.BuildProperties;
+import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import reactor.netty.DisposableServer;
 import reactor.netty.http.server.HttpServer;
@@ -49,7 +50,7 @@ class WhmcsClientConfigTest {
                 .bindNow();
 
         var webClient = new WhmcsClientConfig(configWithUrl("http://localhost:" + server.port() + "/whmcs/"))
-                .whmcsWebClient(buildProperties("sorm-935", "1.2.3"));
+                .whmcsWebClient(WebClient.builder(), buildProperties("sorm-935", "1.2.3"));
 
         String body = webClient.get().uri("action")
                 .exchangeToMono(response -> response.bodyToMono(String.class))
@@ -75,7 +76,7 @@ class WhmcsClientConfigTest {
         properties.setClient(client);
 
         var webClient = new WhmcsClientConfig(properties)
-                .whmcsWebClient(buildProperties("sorm-935", "1.2.3"));
+                .whmcsWebClient(WebClient.builder(), buildProperties("sorm-935", "1.2.3"));
 
         assertNotNull(webClient);
     }

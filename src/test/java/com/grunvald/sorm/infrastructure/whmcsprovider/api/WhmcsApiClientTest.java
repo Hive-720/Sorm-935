@@ -5,6 +5,10 @@ import com.grunvald.sorm.infrastructure.config.WhmcsPropertiesConfig;
 import com.grunvald.sorm.infrastructure.whmcsprovider.api.request.GetActivityLogRequest;
 import com.grunvald.sorm.infrastructure.whmcsprovider.api.request.GetPaymentMethodRequest;
 import com.grunvald.sorm.service.whmcsprovider.ProviderException;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.observation.DefaultMeterObservationHandler;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+import io.micrometer.observation.ObservationRegistry;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterEach;
@@ -14,9 +18,11 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.test.StepVerifier;
 
 import java.io.IOException;
+import java.time.Duration;
 
 import static com.grunvald.sorm.service.whmcsprovider.ProviderException.Error.EXTERNAL_ERROR;
 import static com.grunvald.sorm.service.whmcsprovider.ProviderException.Error.NOT_FOUND;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -26,6 +32,7 @@ class WhmcsApiClientTest {
 
     private MockWebServer server;
     private WhmcsApiClient client;
+    private MeterRegistry meterRegistry;
 
     @BeforeEach
     void setUp() throws IOException {
@@ -40,7 +47,13 @@ class WhmcsApiClientTest {
 
         var config = new WhmcsClientConfig(props);
         var webClient = WebClient.builder().baseUrl(server.url("/").toString()).build();
-        client = new WhmcsApiClient(webClient, config);
+
+        meterRegistry = new SimpleMeterRegistry();
+        var observationRegistry = ObservationRegistry.create();
+        observationRegistry.observationConfig()
+                .observationHandler(new DefaultMeterObservationHandler(meterRegistry));
+
+        client = new WhmcsApiClient(webClient, config, observationRegistry);
     }
 
     @AfterEach
@@ -145,5 +158,45 @@ class WhmcsApiClientTest {
         StepVerifier.create(client.request(new GetPaymentMethodRequest()))
                 .expectErrorSatisfies(e -> assertEquals(EXTERNAL_ERROR, ((ProviderException) e).getError()))
                 .verify();
+    }
+
+    @Test
+    void request_success_recordsTimerWithActionTag() {
+        server.enqueue(new MockResponse()
+                .setHeader("Content-Type", "application/json")
+                .setBody("{\"result\":\"success\",\"paymentmethods\":{\"paymentmethod\":[]}}"));
+
+        client.request(new GetPaymentMethodRequest()).block();
+
+        // doFinally срабатывает уже после сигнала downstream, поэтому
+        // observation.stop() может выполниться чуть позже block()
+        await().atMost(Duration.ofSeconds(5)).untilAsserted(() -> {
+            var timer = meterRegistry.find("sorm.whmcs.api.request")
+                    .tag("action", "GetPaymentMethods")
+                    .timer();
+            assertNotNull(timer);
+            assertEquals(1, timer.count());
+        });
+    }
+
+    @Test
+    void request_error_recordsTimerWithErrorTag() {
+        server.enqueue(new MockResponse()
+                .setResponseCode(500)
+                .setHeader("Content-Type", "application/json")
+                .setBody("{\"result\":\"error\",\"message\":\"Client not found\"}"));
+
+        StepVerifier.create(client.request(new GetPaymentMethodRequest()))
+                .expectErrorSatisfies(e -> assertEquals(NOT_FOUND, ((ProviderException) e).getError()))
+                .verify();
+
+        await().atMost(Duration.ofSeconds(5)).untilAsserted(() -> {
+            var timer = meterRegistry.find("sorm.whmcs.api.request")
+                    .tag("action", "GetPaymentMethods")
+                    .tag("error", "ProviderException")
+                    .timer();
+            assertNotNull(timer);
+            assertEquals(1, timer.count());
+        });
     }
 }

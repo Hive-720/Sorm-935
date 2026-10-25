@@ -4,6 +4,8 @@ import com.grunvald.sorm.service.whmcsprovider.ProviderException;
 import com.grunvald.sorm.infrastructure.config.WhmcsClientConfig;
 import com.grunvald.sorm.infrastructure.whmcsprovider.api.request.Request;
 import com.grunvald.sorm.infrastructure.whmcsprovider.api.response.Response;
+import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationRegistry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -26,9 +28,21 @@ import static com.grunvald.sorm.service.whmcsprovider.ProviderException.Error.EX
 public class WhmcsApiClient {
     private final WebClient whmcsWebClient;
     private final WhmcsClientConfig whmcsConfig;
+    private final ObservationRegistry observationRegistry;
 
 
     public <T extends Response> Mono<T> request(Request<T> request) {
+        return Mono.defer(() -> {
+            var observation = Observation.createNotStarted("sorm.whmcs.api.request", observationRegistry)
+                    .lowCardinalityKeyValue("action", request.getAction().getNameAction())
+                    .start();
+            return execute(request)
+                    .doOnError(observation::error)
+                    .doFinally(signal -> observation.stop());
+        });
+    }
+
+    private <T extends Response> Mono<T> execute(Request<T> request) {
         return whmcsWebClient.post()
                 .body(buildFormData(request))
                 .retrieve()

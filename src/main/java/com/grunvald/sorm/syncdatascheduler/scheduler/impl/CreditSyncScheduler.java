@@ -8,6 +8,7 @@ import com.grunvald.sorm.syncdatascheduler.scheduler.Scheduler;
 import com.grunvald.sorm.syncdatascheduler.scheduler.SchedulerType;
 import com.grunvald.sorm.syncdatascheduler.scheduler.util.SchedulerCoordinator;
 import com.grunvald.sorm.syncdatascheduler.scheduler.util.SchedulerHelper;
+import com.grunvald.sorm.syncdatascheduler.scheduler.util.SyncTaskMetrics;
 import com.grunvald.sorm.util.DateUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
@@ -29,8 +30,8 @@ public class CreditSyncScheduler extends Scheduler<CreditSyncPage, CreditSchedul
     public CreditSyncScheduler(CreditSchedulerPropertiesConfig config, SchedulerHelper schedulerHelper,
                                SchedulerTaskRepository schedulerTaskRepository, DateUtils date,
                                TransactionalOperator transactional, SchedulerCoordinator coordinator,
-                               CreditSyncService creditSyncService) {
-        super(CREDIT, config, schedulerHelper, schedulerTaskRepository, date, transactional, coordinator);
+                               CreditSyncService creditSyncService, SyncTaskMetrics syncTaskMetrics) {
+        super(CREDIT, config, schedulerHelper, schedulerTaskRepository, date, transactional, coordinator, syncTaskMetrics);
         this.creditSyncService = creditSyncService;
     }
 

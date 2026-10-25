@@ -4,6 +4,7 @@ import com.grunvald.sorm.service.whmcsdata.datasyncservice.contact.ContactSyncSe
 import com.grunvald.sorm.syncdatascheduler.config.impl.ContactDeleteSchedulerPropertiesConfig;
 import com.grunvald.sorm.syncdatascheduler.scheduler.util.SchedulerCoordinator;
 import com.grunvald.sorm.syncdatascheduler.scheduler.util.SchedulerHelper;
+import com.grunvald.sorm.syncdatascheduler.scheduler.util.SyncTaskMetrics;
 import com.grunvald.sorm.syncdatascheduler.task.SchedulerTaskRepository;
 import com.grunvald.sorm.util.DateUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +31,7 @@ class ContactDeleteSyncSchedulerTest extends SyncSchedulerTestBase {
     @BeforeEach
     void setUp() {
         service = mock(ContactSyncService.class);
-        scheduler = new TestableScheduler(config(), helper, repository, date, transactional, coordinator, service);
+        scheduler = new TestableScheduler(config(), helper, repository, date, transactional, coordinator, service, metrics);
     }
 
     private ContactDeleteSchedulerPropertiesConfig config() {
@@ -83,8 +84,8 @@ class ContactDeleteSyncSchedulerTest extends SyncSchedulerTestBase {
 
         TestableScheduler(ContactDeleteSchedulerPropertiesConfig config, SchedulerHelper helper,
                           SchedulerTaskRepository repository, DateUtils date, TransactionalOperator transactional,
-                          SchedulerCoordinator coordinator, ContactSyncService service) {
-            super(config, helper, repository, date, transactional, coordinator, service);
+                          SchedulerCoordinator coordinator, ContactSyncService service, SyncTaskMetrics syncTaskMetrics) {
+            super(config, helper, repository, date, transactional, coordinator, service, syncTaskMetrics);
         }
 
         StepView execute(Long offset, String cursor) {

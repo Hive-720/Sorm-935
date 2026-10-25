@@ -7,6 +7,7 @@ import com.grunvald.sorm.syncdatascheduler.task.SchedulerTaskRepository;
 import com.grunvald.sorm.syncdatascheduler.scheduler.Scheduler;
 import com.grunvald.sorm.syncdatascheduler.scheduler.util.SchedulerCoordinator;
 import com.grunvald.sorm.syncdatascheduler.scheduler.util.SchedulerHelper;
+import com.grunvald.sorm.syncdatascheduler.scheduler.util.SyncTaskMetrics;
 import com.grunvald.sorm.util.DateUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
@@ -25,8 +26,8 @@ public class OrderSyncScheduler extends Scheduler<OrderSyncPage, OrderSchedulerP
     public OrderSyncScheduler(OrderSchedulerPropertiesConfig config, SchedulerHelper schedulerHelper,
                               SchedulerTaskRepository schedulerTaskRepository, DateUtils dateTime,
                               TransactionalOperator transactional, SchedulerCoordinator coordinator,
-                              OrderSyncService orderSyncService) {
-        super(ORDER, config, schedulerHelper, schedulerTaskRepository, dateTime, transactional, coordinator);
+                              OrderSyncService orderSyncService, SyncTaskMetrics syncTaskMetrics) {
+        super(ORDER, config, schedulerHelper, schedulerTaskRepository, dateTime, transactional, coordinator, syncTaskMetrics);
         this.orderSyncService = orderSyncService;
     }
 

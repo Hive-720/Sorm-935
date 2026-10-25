@@ -3,9 +3,11 @@ package com.grunvald.sorm.syncdatascheduler.scheduler.impl;
 import com.grunvald.sorm.syncdatascheduler.config.SchedulerPropertiesConfig;
 import com.grunvald.sorm.syncdatascheduler.scheduler.util.SchedulerCoordinator;
 import com.grunvald.sorm.syncdatascheduler.scheduler.util.SchedulerHelper;
+import com.grunvald.sorm.syncdatascheduler.scheduler.util.SyncTaskMetrics;
 import com.grunvald.sorm.syncdatascheduler.task.SchedulerTaskRepository;
 import com.grunvald.sorm.syncdatascheduler.task.model.SchedulerTask;
 import com.grunvald.sorm.util.DateUtils;
+import io.micrometer.observation.Observation;
 import org.junit.jupiter.api.BeforeEach;
 import org.reactivestreams.Publisher;
 import org.springframework.transaction.reactive.TransactionalOperator;
@@ -34,6 +36,7 @@ abstract class SyncSchedulerTestBase {
     protected DateUtils date;
     protected TransactionalOperator transactional;
     protected SchedulerCoordinator coordinator;
+    protected SyncTaskMetrics metrics;
 
     @BeforeEach
     void setUpBase() {
@@ -42,6 +45,9 @@ abstract class SyncSchedulerTestBase {
         date = mock(DateUtils.class);
         transactional = mock(TransactionalOperator.class);
         coordinator = mock(SchedulerCoordinator.class);
+        metrics = mock(SyncTaskMetrics.class);
+
+        when(metrics.startTaskObservation(any())).thenReturn(Observation.NOOP);
 
         when(helper.createRetry(any(), any())).thenReturn(Retry.max(1));
         when(date.now()).thenReturn(NOW);
