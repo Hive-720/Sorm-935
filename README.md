@@ -28,8 +28,8 @@ flowchart TB
     subgraph Application["СОРМ"]
         subgraph Presentation["Слой представления"]
             REST["REST Controllers<br>NotificationsController"]
-            GQL_QUERY["GraphQL Query Resolvers<br>"]
-            GQL_SUB["GraphQL Subscription Resolver<br>"]
+            GQL_QUERY["GraphQL Query Resolvers"]
+            GQL_SUB["GraphQL Subscription Resolver"]
             SECURITY["Security Filter<br>API Key Authentication"]
             GQL_CONFIG["GraphQL Config<br>Schema"]
         end
@@ -41,10 +41,10 @@ flowchart TB
         end
         subgraph Infrastructure["Инфраструктура"]
             REPOS["R2DBC Repositories<br>QueryDSL, Reactive Queries"]
-            WHMCS_PROVIDER["WHMCS Provider<br>"]
+            WHMCS_PROVIDER["WHMCS Provider"]
             WHMCS_CLIENT["WHMCS API Client<br>WebClient, Request/Response"]
             EVENT_BUS["Event Bus<br>NotificationEventBus"]
-            PERSIST_CONFIG["Persistence Config<br>"]
+            PERSIST_CONFIG["Persistence Config"]
         end
         subgraph Scheduling["Слой планирования"]
             SCHEDULERS["Sync Schedulers<br>15 типов синхронизации"]
@@ -54,7 +54,7 @@ flowchart TB
         end
         subgraph Core["Ядро приложения"]
             APP["SormApplication<br>Spring Boot Application"]
-            APP_CONFIG["Application Config<br>"]
+            APP_CONFIG["Application Config"]
             RESOURCES["Resources<br>GraphQL Schema, Messages"]
         end
         subgraph Monitoring["Мониторинг"]
@@ -83,7 +83,7 @@ flowchart TB
     SCHEDULER_COORD --> SCHEDULERS
     SCHEDULER_CONFIG --> SCHEDULERS
     SYNC_TASK --> REPOS
-    APP --> ACTUATOR & LOGGING & ACTUATOR
+    APP --> ACTUATOR & LOGGING
     RESOURCES --> APP
     WHMCS:::external
     POSTGRES:::external
@@ -145,9 +145,10 @@ flowchart TB
 
 ### **Мониторинг**
 
-- **Метрики**: Micrometer, Prometheus
-- **Логирование**: Structured logging с Logback
-- **Health checks**: Spring Boot Actuator
+- **Метрики**: Micrometer, Prometheus (порт `9990`, эндпоинт `/actuator/prometheus`)
+- **Логирование**: Structured logging (JSON) с Logback, доставка логов в Loki через Promtail
+- **Health checks**: Spring Boot Actuator (`/actuator/health`)
+- **Визуализация**: Grafana (дашборд `sorm-935-overview` из `grafana/provisioning/dashboards`)
 
 ### **Тестирование**
 
@@ -156,28 +157,138 @@ flowchart TB
 - **GraphQL тесты**: Spring GraphQL Test
 - **Реактивные тесты**: StepVerifier (Project Reactor)
 
+## Сборка и запуск
+
+### Требования
+
+- JDK 21
+- Docker и Docker Compose (для локального стека: PostgreSQL, Prometheus, Grafana, Loki, Promtail)
+
+### Сборка и тесты
+
+```bash
+./gradlew clean build        # сборка + unit-тесты
+./gradlew integrationTest    # интеграционные тесты (Testcontainers, PostgreSQL)
+./gradlew testCoverageReport # сводный отчёт JaCoCo (unit + integration)
+```
+
+### Запуск в Docker
+
+```bash
+docker compose -f docker-compose.dev.yml up --build
+```
+
+| Сервис        | Адрес                                              |
+|---------------|----------------------------------------------------|
+| SORM Server   | порт `9931` (GraphQL `/query`, WebSocket `/subscription`) |
+| Management    | порт `9990` (`/actuator/health`, `/actuator/prometheus`) |
+| GraphiQL      | `http://localhost:9931/graphiql`                   |
+| Prometheus    | `http://localhost:9090`                            |
+| Grafana       | `http://localhost:3000` (admin/admin, дашборд `sorm-935-overview`) |
+| Loki          | `http://localhost:3100`                            |
+| pgAdmin       | `http://localhost:5081`                            |
+
+### Профили
+
+- `dev` (по умолчанию) - локальная разработка, GraphiQL включён
+- `docker` - конфигурация для docker-compose (параметры подключения из переменных окружения `.env`)
+- `integrationTest` - профиль для интеграционных тестов
+
+### CI/CD
+
+Bitbucket Pipelines (`bitbucket-pipelines.yml`): сборка и unit-тесты (`./gradlew clean build test`)
+с публикацией артефактов (jar, отчёты), сканирование секретов (git-secrets-scan).
+
+## Структура проекта
+
+| Каталог | Назначение |
+|---------|------------|
+| `src/main/java/com/grunvald/sorm/presentation` | REST-контроллеры, GraphQL-резолверы, безопасность, конфигурация |
+| `src/main/java/com/grunvald/sorm/service` | Бизнес-логика: сервисы данных WHMCS, синхронизация, системные уведомления |
+| `src/main/java/com/grunvald/sorm/infrastructure` | R2DBC-репозитории, WHMCS API-клиент, event bus |
+| `src/main/java/com/grunvald/sorm/syncdatascheduler` | Планировщики синхронизации и их конфигурации |
+| `src/main/resources/graphql/schema.graphqls` | GraphQL-схема (schema-first) |
+| `src/main/resources/db/changelog` | Миграции Liquibase |
+| `src/main/resources/messages` | Локализация сообщений (`en`, `ru`, `fr`) |
+| `src/integrationTest` | Интеграционные тесты (Testcontainers) |
+| `grafana/provisioning` | Дашборд и источники данных Grafana |
+| `prometheus`, `promtail` | Конфигурации сбора метрик и логов |
+
 # API Документация
 
 ## Локализация
 
 - Заголовок запроса: `lang`
-- Значение: Alpha2 код страны (например, `ru`, `en`, `de`)
-- По умолчанию: `en`
+- Значение: Alpha2 код страны
+- Поддерживаемые локали: `en` (по умолчанию), `ru`, `fr`
+- Некорректное значение заголовка игнорируется - используется локаль по умолчанию `en`
 
 ## Безопасность
 
-Включается/отключается в настройках yaml
+Аутентификация включается/отключается настройкой `sorm.security.enabled` (по умолчанию `false`).
+При включении применяется ко всем запросам - и REST, и GraphQL:
 
-- **Заголовок**: `X-API-Key` (обязательный)
-- **Требования к соединению**: HTTPS (обязательно)
+- **Заголовок**: `X-API-Key` (обязательный) - при отсутствии или несовпадении ключа возвращается `401`
+- **Ключ**: `sorm.security.api-key`, не короче 16 символов
+- **Исключения**: эндпоинты из списка `sorm.security.exclude-endpoints` не проверяются
+  (например, `/actuator/health` для health check'ов)
+- **HTTPS**: защищённое соединение требуется приказом № 935; терминирование TLS/mTLS
+  выполняется на уровне прокси (NGINX) - само приложение проверяет только `X-API-Key`
 
-## API
+## REST API
 
-ОПИСАТЬ!!!
+REST API используется для приёма уведомлений: пульт управления (ПУ) и AlertManager отправляют события,
+которые сохраняются в БД и в реальном времени транслируются подписчикам GraphQL-подписки `trap`.
+
+### `PUT /notifications/push`
+
+Приём системного уведомления от ПУ.
+
+| Поле       | Тип      | Описание                                                                                                                            |
+|------------|----------|-------------------------------------------------------------------------------------------------------------------------------------|
+| `type`     | string   | Тип события: `RESTARTDB`, `UNAUTHORIZEDACCESS`, `CRITICALERROR`, `MAJORERROR`, `MINORERROR`, `SCHEMCHANGED`, `METRICALERTS` (обязательное) |
+| `message`  | string   | Текст уведомления (обязательное, до 1000 символов)                                                                                   |
+| `startAt`  | datetime | Время возникновения события (обязательное)                                                                                           |
+
+### `PUT /notifications/metric/alerts/push`
+
+Приём алертов от AlertManager (формат webhook AlertManager): `groupKey`, `status` (`firing`/`resolved`),
+`receiver`, `groupLabels`, `commonLabels`, `commonAnnotations`, `externalURL` и массив `alerts`.
+Событие пересылается подписчикам как `Trap` типа `METRICALERTS`.
+
+### Ограничение нагрузки
+
+Количество одновременных запросов ограничено семафорами:
+`sorm.rest.api.configs.push.max_requests` и `sorm.rest.api.configs.alert.max_requests`
+(по умолчанию 50, в примере конфигурации - 100). При превышении возвращается `429`.
+
+### Коды ошибок REST
+
+| Код                  | HTTP | Описание                                        |
+|----------------------|------|-------------------------------------------------|
+| `INVALID_REQUEST`    | 400  | Некорректный запрос или тело запроса            |
+| `INVALID_PARAMETER`  | 400  | Ошибка валидации поля                           |
+| `MESSAGE_SIZE_EXCEED`| 400  | Превышен допустимый размер тела запроса         |
+| `METHOD_NOT_ALLOWED` | 405  | Метод не поддерживается                         |
+| `RESOURCE_NOT_FOUND` | 404  | Ресурс не найден                                |
+| `TOO_MANY_REQUESTS`  | 429  | Превышен лимит одновременных запросов           |
+| `INTERNAL_ERROR`     | 500  | Внутренняя ошибка                               |
+
+Тексты сообщений об ошибках локализуются по заголовку `lang`.
 
 ## GraphQL API
 
 GraphQL API предоставляет три ключевых метода:
+
+### Конечные точки
+
+| Протокол              | Путь            | Назначение                              |
+|-----------------------|-----------------|-----------------------------------------|
+| HTTP POST/GET         | `/query`        | Выполнение запросов (`request`, `getSchema`) |
+| WebSocket (graphql-ws)| `/subscription` | Подписка `trap`                         |
+| HTTP                  | `/graphiql`     | Интерактивная консоль GraphiQL (включена в профилях `dev` и `docker`) |
+
+Пути задаются свойствами `spring.graphql.path` и `spring.graphql.websocket.path`.
 
 ### Основные методы
 
@@ -211,8 +322,14 @@ GraphQL API предоставляет три ключевых метода:
 
 Каждый метод поддерживает два типа пагинации:
 
-- **Offset**: параметры `offset` и `limit`
-- **Cursor**: параметр `cursor` и `limit`
+- **Offset**: параметры `offset` (≥ 0) и `limit`
+- **Cursor**: параметры `cursor` и `limit` - курсор возвращается в результате
+  и передаётся в следующий запрос
+
+Ограничения: `limit` по умолчанию равен 25, максимальное значение - 100
+(директива `@Range(min: 1, max: 100)`). Значение `cursor` - строка с положительным целым числом
+(валидируется регулярным выражением `^[1-9]\d*$`). Актуальный максимум размера страницы
+сообщается клиенту в поле `maxPageSize` типа `QueryMessage` (настройка `sorm.graphql.api.max_page_size`).
 
 #### Фильтрация
 
@@ -239,10 +356,73 @@ GraphQL API предоставляет три ключевых метода:
 - `OR` - логическое ИЛИ
 - `NOT` - логическое НЕ
 
+Логические операторы задаются вложенными полями `and` / `or` / `not` фильтра
+(глубина вложенности ограничена анализом сложности запроса).
+
+Числовые операторы (`le`, `lt`, `ge`, `gt`, `between`) применимы к `IntFilter`
+и `DateTimeStringFilter`; текстовые - к строковым фильтрам соответствующего типа.
+
 ### Пример структуры фильтра
 
 ```graphql
-НАПИСАТЬ ПРИМЕР!!!
+# Offset-пагинация с комбинированными условиями
+query {
+  request {
+    requestID
+    offline
+    maxPageSize
+    clients(
+      filter: {
+        and: [
+          { name: { fullName: { allofterms: "иванов,петров" } } },
+          { or: [
+            { email: { email: { regexp: "@example\\.com$" } } },
+            { inn: { inn: { eq: "7701234567" } } }
+          ] }
+        ]
+      }
+      offset: 0
+      limit: 25
+    ) {
+      cursor
+      hasNextPage
+      result {
+        id
+        name { fullName }
+        email { email }
+        inn { inn }
+        status
+      }
+    }
+  }
+}
+```
+
+```graphql
+# Cursor-пагинация: курсор из результата передаётся в следующий запрос
+query {
+  request {
+    clients(
+      filter: { name: { fullName: { anyofterms: "иванов" } } }
+      cursor: "42"
+      limit: 10
+    ) {
+      cursor
+      hasNextPage
+      result {
+        id
+        name { fullName }
+      }
+    }
+  }
+}
+```
+
+```graphql
+# Получение полной схемы в SDL-формате
+query {
+  getSchema
+}
 ```
 
 ### Директивы валидации
@@ -282,6 +462,30 @@ type EntityResult {
 
 ### Типы событий (Subscription)
 
+Подписка `trap` - канал событий в реальном времени: уведомления, отправленные ПУ через REST API
+(`PUT /notifications/push`), алерты AlertManager (`PUT /notifications/metric/alerts/push`),
+а также внутренние события системы (ошибки, перезапуск и т. д.) доставляются всем подписчикам.
+
+```graphql
+subscription {
+  trap {
+    type
+    message
+    startsAt { utc }
+    metricalerts {
+      status
+      receiver
+      externalURL
+      alerts {
+        status
+        fingerprint
+        startAt { utc }
+      }
+    }
+  }
+}
+```
+
 ```graphql
 enum TrapType {
     RESTARTDB             # Перезапуск базы данных
@@ -315,9 +519,12 @@ input DateTimeRange    # Диапазон дат
 
 ### Обработка ошибок
 
-- Все GraphQL ошибки возвращаются в стандартном формате GraphQL
-- HTTP статус коды: 200 для успешных запросов, 4xx/5xx для ошибок
+- Все GraphQL ошибки возвращаются в стандартном формате GraphQL - в массиве `errors`
+- Ошибки валидации и выполнения GraphQL возвращаются с HTTP-статусом 200 в теле ответа;
+  HTTP `4xx`/`5xx` используются REST API и ошибками HTTP-уровня, возникшими до разбора GraphQL-запроса
 - Валидация выполняется с помощью директив GraphQL
+- Запросы ограничены по глубине и сложности (`sorm.graphql.api.query.analysis.max_depth`
+  и `max_complexity`); при превышении возвращается код `REQUEST_TOO_COMPLEX`
 
 #### Коды ошибок
 
@@ -359,21 +566,38 @@ API GraphQL может возвращать следующие коды ошиб
 
 | Планировщик                                                                                                                         | Описание                        | Тип операций                                        |
 |-------------------------------------------------------------------------------------------------------------------------------------|---------------------------------|-----------------------------------------------------|
-| [`ActivityLogSyncScheduler.java`](src/main/java/com/kjsoft/sorm/syncdatascheduler/scheduler/impl/ActivityLogSyncScheduler.java)     | Логи активностей                | 📥 Загрузка новых записей                           |
-| [`AffiliateSyncScheduler.java`](src/main/java/com/kjsoft/sorm/syncdatascheduler/scheduler/impl/AffiliateSyncScheduler.java)         | Партнерки клиентов              | 📥 Загрузка и 🔄 обновление                         |
-| [`ClientDetailSyncScheduler.java`](src/main/java/com/kjsoft/sorm/syncdatascheduler/scheduler/impl/ClientDetailSyncScheduler.java)   | Детали клиентов                 | 🔄 Обновление + 🗑️ отметка удаленных               |
-| [`ClientGroupSyncScheduler.java`](src/main/java/com/kjsoft/sorm/syncdatascheduler/scheduler/impl/ClientGroupSyncScheduler.java)     | Группы клиентов                 | 📥 Загрузка + 🔄 обновление                         |
-| [`ClientProductSyncScheduler.java`](src/main/java/com/kjsoft/sorm/syncdatascheduler/scheduler/impl/ClientProductSyncScheduler.java) | Продукты клиентов               | 📥 Загрузка + 🔄 обновление                         |
-| [`ClientSyncScheduler.java`](src/main/java/com/kjsoft/sorm/syncdatascheduler/scheduler/impl/ClientSyncScheduler.java)               | Клиенты                         | 📥 Загрузка новых записей                           |
-| [`ContactDeleteSyncScheduler.java`](src/main/java/com/kjsoft/sorm/syncdatascheduler/scheduler/impl/ContactDeleteSyncScheduler.java) | Определение удаленных контактов | 🗑️ Отметка удаленных записей                       |
-| [`ContactSyncScheduler.java`](src/main/java/com/kjsoft/sorm/syncdatascheduler/scheduler/impl/ContactSyncScheduler.java)             | Контакты                        | 📥 Загрузка + 🔄 обновление                         |
-| [`CreditSyncScheduler.java`](src/main/java/com/kjsoft/sorm/syncdatascheduler/scheduler/impl/CreditSyncScheduler.java)               | Кредиты                         | 📥 Загрузка новых записей                           |
-| [`EmailSyncScheduler.java`](src/main/java/com/kjsoft/sorm/syncdatascheduler/scheduler/impl/EmailSyncScheduler.java)                 | Электронная почта               | 📥 Загрузка новых записей                           |
-| [`InvoiceSyncScheduler.java`](src/main/java/com/kjsoft/sorm/syncdatascheduler/scheduler/impl/InvoiceSyncScheduler.java)             | Счета и транзакции              | 📥 Загрузка + 🔄 обновление                         |
-| [`OrderSyncScheduler.java`](src/main/java/com/kjsoft/sorm/syncdatascheduler/scheduler/impl/OrderSyncScheduler.java)                 | Заказы                          | 📥 Загрузка + 🔄 обновление                         |
-| [`PaymentMethodSyncScheduler.java`](src/main/java/com/kjsoft/sorm/syncdatascheduler/scheduler/impl/PaymentMethodSyncScheduler.java) | Методы оплаты                   | 📥 Загрузка + 🔄 Обновление + 🗑️ отметка удаленных |
-| [`ProductSyncScheduler.java`](src/main/java/com/kjsoft/sorm/syncdatascheduler/scheduler/impl/ProductSyncScheduler.java)             | Продукты и услуги               | 📥 Загрузка + 🔄 Обновление + 🗑️ отметка удаленных |
-| [`UserSyncScheduler.java`](src/main/java/com/kjsoft/sorm/syncdatascheduler/scheduler/impl/UserSyncScheduler.java)                   | Пользователи                    | 📥 Загрузка + 🔄 обновление                         |
+| [`ActivityLogSyncScheduler.java`](src/main/java/com/grunvald/sorm/syncdatascheduler/scheduler/impl/ActivityLogSyncScheduler.java)     | Логи активностей                | 📥 Загрузка новых записей                           |
+| [`AffiliateSyncScheduler.java`](src/main/java/com/grunvald/sorm/syncdatascheduler/scheduler/impl/AffiliateSyncScheduler.java)         | Партнерки клиентов              | 📥 Загрузка и 🔄 обновление                         |
+| [`ClientDetailSyncScheduler.java`](src/main/java/com/grunvald/sorm/syncdatascheduler/scheduler/impl/ClientDetailSyncScheduler.java)   | Детали клиентов                 | 🔄 Обновление + 🗑️ отметка удаленных               |
+| [`ClientGroupSyncScheduler.java`](src/main/java/com/grunvald/sorm/syncdatascheduler/scheduler/impl/ClientGroupSyncScheduler.java)     | Группы клиентов                 | 📥 Загрузка + 🔄 обновление                         |
+| [`ClientProductSyncScheduler.java`](src/main/java/com/grunvald/sorm/syncdatascheduler/scheduler/impl/ClientProductSyncScheduler.java) | Продукты клиентов               | 📥 Загрузка + 🔄 обновление                         |
+| [`ClientSyncScheduler.java`](src/main/java/com/grunvald/sorm/syncdatascheduler/scheduler/impl/ClientSyncScheduler.java)               | Клиенты                         | 📥 Загрузка новых записей                           |
+| [`ContactDeleteSyncScheduler.java`](src/main/java/com/grunvald/sorm/syncdatascheduler/scheduler/impl/ContactDeleteSyncScheduler.java) | Определение удаленных контактов | 🗑️ Отметка удаленных записей                       |
+| [`ContactSyncScheduler.java`](src/main/java/com/grunvald/sorm/syncdatascheduler/scheduler/impl/ContactSyncScheduler.java)             | Контакты                        | 📥 Загрузка + 🔄 обновление                         |
+| [`CreditSyncScheduler.java`](src/main/java/com/grunvald/sorm/syncdatascheduler/scheduler/impl/CreditSyncScheduler.java)               | Кредиты                         | 📥 Загрузка новых записей                           |
+| [`EmailSyncScheduler.java`](src/main/java/com/grunvald/sorm/syncdatascheduler/scheduler/impl/EmailSyncScheduler.java)                 | Электронная почта               | 📥 Загрузка новых записей                           |
+| [`InvoiceSyncScheduler.java`](src/main/java/com/grunvald/sorm/syncdatascheduler/scheduler/impl/InvoiceSyncScheduler.java)             | Счета и транзакции              | 📥 Загрузка + 🔄 обновление                         |
+| [`OrderSyncScheduler.java`](src/main/java/com/grunvald/sorm/syncdatascheduler/scheduler/impl/OrderSyncScheduler.java)                 | Заказы                          | 📥 Загрузка + 🔄 обновление                         |
+| [`PaymentMethodSyncScheduler.java`](src/main/java/com/grunvald/sorm/syncdatascheduler/scheduler/impl/PaymentMethodSyncScheduler.java) | Методы оплаты                   | 📥 Загрузка + 🔄 Обновление + 🗑️ отметка удаленных |
+| [`ProductSyncScheduler.java`](src/main/java/com/grunvald/sorm/syncdatascheduler/scheduler/impl/ProductSyncScheduler.java)             | Продукты и услуги               | 📥 Загрузка + 🔄 Обновление + 🗑️ отметка удаленных |
+| [`UserSyncScheduler.java`](src/main/java/com/grunvald/sorm/syncdatascheduler/scheduler/impl/UserSyncScheduler.java)                   | Пользователи                    | 📥 Загрузка + 🔄 обновление                         |
+
+### Режимы работы планировщиков
+
+Каждый планировщик поддерживает три режима (`mode`):
+
+- `NORMAL` - после успешной начальной выгрузки работа продолжается периодически по `cron_expression`
+- `FORCE_FIRST` - при каждом запуске приложения начальная выгрузка выполняется заново,
+  затем работа продолжается по `cron_expression`
+- `ONLY_FIRST` - выполняется только начальная выгрузка, периодические задачи не запускаются
+
+Начальная выгрузка (`first_start`) повторяется при ошибках согласно `delays`
+(список задержек в миллисекундах - количество элементов равно числу попыток);
+флаг `continue_after_error` определяет, запускать ли периодические задачи,
+если начальная выгрузка так и не завершилась успешно.
+
+Зависимости между планировщиками (например, детали клиентов выгружаются после клиентов)
+управляются SchedulerCoordinator.
 
 ### Настройки
 
@@ -381,7 +605,7 @@ API GraphQL может возвращать следующие коды ошиб
 sorm:
   security:
     enabled: false #false по умолчанию
-    api-key: testApiKey #Ключ для авторизации
+    api-key: testApiKey123456 #Ключ для авторизации (не короче 16 символов)
     exclude-endpoints: #Эндпоинты которые будут исключены из проверки
       - '/actuator/health'
   system:
@@ -454,8 +678,8 @@ sorm:
             delays: [ 100, 200, 500, 1000, 10000, 50000, 100000 ] #Повторы при ошибке. Количество элементов - количество попыток, значение элемента - миллисекунды ожидания. По умолчанию [1000, 5000, 10000, 20000, 60000, 120000]
             continue_after_error: true #Запускать периодические задачи если начальная выгрузка оказалась неуспешной. По умолчанию true
           client_limit: 100 #Количество выгружаемых клиентов из бд за один оборот задачи. По умолчанию 25.
-          skip_error_record: false #Пропускать элементы с ошибкой и продолжать выгрузку. По умолчанию false.
-          concurrency: 20 #Параллельное количество запросов в whmcs. По умолчанию 20
+          skip_batch_error: false #Пропускать пакет с ошибкой и продолжать выгрузку. По умолчанию false.
+          concurrency: 20 #Параллельное количество запросов в whmcs. По умолчанию не задано - настраивается явно (в примере 20).
 
         client_group:
           enabled: true #Вкл/выкл планировщик. По умолчанию false.
@@ -573,6 +797,6 @@ sorm:
           first_start: #Самый первый запуск планировщика
             delays: [ 100, 200, 500, 1000, 10000, 50000, 100000 ] #Повторы при ошибке. Количество элементов - количество попыток, значение элемента - миллисекунды ожидания. По умолчанию [1000, 5000, 10000, 20000, 60000, 120000]
             continue_after_error: true #Запускать периодические задачи если начальная выгрузка оказалась неуспешной. По умолчанию true
-          limit: 25 #Ограничение на выгрузку элементов из whmcs за запрос. По умолчанию 100.
+          limit: 25 #Ограничение на выгрузку элементов из whmcs за запрос. По умолчанию 25.
           skip_batch_error: false #Пропускать пакет с ошибкой и продолжать выгрузку. По умолчанию false.
 ```
